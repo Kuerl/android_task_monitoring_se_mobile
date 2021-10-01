@@ -1,21 +1,29 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { ImageBackground } from 'react-native';
+import { globalStyles } from './constants/GlobalStyle';
+import { useFonts } from 'expo-font';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AppLoading from 'expo-app-loading';
+import MainScreen from './screens/MainScreen';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const [loaded] = useFonts({
+    AllerDisplay: require('./assets/fonts/AllerDisplay.ttf'),
+    SansationRegular: require('./assets/fonts/Sansation-Regular.ttf'),
+  });
+  if (!loaded) {
+    return <AppLoading />;
+  } else {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    <SafeAreaProvider>
+      <ImageBackground source={require('./assets/images/background3.jpg')} 
+        style={globalStyles.container}
+        imageStyle={{opacity: 0.9, backgroundColor: '#000000'}}>
+          <MainScreen />
+      </ImageBackground>
+    </SafeAreaProvider>
+  )}
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

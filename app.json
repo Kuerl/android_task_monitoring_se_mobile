@@ -4,12 +4,7 @@
     "slug": "android_task_monitoring_se_mobile_",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+    "icon": "./assets/images/intro.png",
     "updates": {
       "fallbackToCacheTimeout": 0
     },

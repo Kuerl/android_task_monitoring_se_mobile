@@ -1,27 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { TouchableOpacity, Text, View, Animated } from 'react-native';
 import LoginScreen from './login-screen/LoginScreen';
-// MyCustomComponent = Animatable.createAnimatableComponent(MyCustomComponent);
 
 
 import { NavigationContainer } from '@react-navigation/native';
 import SplashScreen from './splash/SplashScreen';
+import HomeScreen from './home-screen/HomeScreen';
 
 export default function MainScreen() {
-  const [state, setstate] = useState(false);
+  const [baseState, setBaseState] = useState({
+    authentication: false,
+    unsplash: false,
+  });
   
-  
-
   useEffect(() => {
-    setTimeout(() => {setstate(true)}, 2900);
+    setTimeout(() => {
+      setBaseState(
+        prevState => ({
+          ...prevState, unsplash: true
+        })
+      )}, 3000);
     return () => {
-      state
+      baseState
     }
-  }, [state])
+  }, [baseState])
   return (
     <>
       {
-        state === true ? <LoginScreen /> : <SplashScreen />
+        (baseState.unsplash === true && baseState.authentication == false) ?
+          <LoginScreen baseState={baseState} setAuth={
+            (e: boolean) => setBaseState(prevState => ({
+              ...prevState,
+              authentication: e,
+            }))}
+          /> :
+          (baseState.unsplash === true && baseState.authentication === true) ?
+            <HomeScreen />:
+            <SplashScreen />
       }
     </>
   );

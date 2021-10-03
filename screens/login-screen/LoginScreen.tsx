@@ -1,39 +1,37 @@
-import React from 'react';
-import { TouchableOpacity, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { View } from 'react-native';
 import { loginStyles } from './styles/LoginStyle';
-import { MaterialIcons, Feather  } from '@expo/vector-icons'; 
-import * as Animatable from 'react-native-animatable';
+import WelcomeComponent from './sub-screen/WelcomeComponent';
+import OptionsComponent from './sub-screen/OptionsComponent';
+import { LoginConstant } from '../../constants/WelcomeScreenConstantVariable';
+import LoginComponent from './sub-screen/LoginComponent';
+import RegisterComponent from './sub-screen/RegisterComponent';
+import MoreComponent from './sub-screen/MoreComponent';
 
-export default function LoginScreen() {
+export default function LoginScreen(
+  {baseState, setAuth} : {baseState: any, setAuth: any}
+) {
+  const [animate, setAnimate] = useState({
+    active: LoginConstant.WELCOME,
+  });
   return (
-    <Animatable.View style={loginStyles.container} animation='zoomInDown'>
-      <View style={loginStyles.flex1}>
-      <View style={loginStyles.loginForm__name}>
-        <Text style={loginStyles.loginForm__name__}>GREETING</Text>
-        <Text style={loginStyles.loginForm__name__}>FROM</Text>
-        <Text style={loginStyles.loginForm__name__}>TASK</Text>
-        <Text style={loginStyles.loginForm__name__}>MONOTORING</Text>
-      </View>
-      </View>
-        <View style={loginStyles.loginForm}>
-          <View style={loginStyles.buttonView}>
-            <View style={loginStyles.viewIcon}>
-                <TouchableOpacity style={loginStyles.button}>
-                  <MaterialIcons name="assignment" size={30} color="black" />
-                </TouchableOpacity>
-            </View>
-            <View style={loginStyles.viewIcon}>
-              <TouchableOpacity style={loginStyles.button}>
-                  <MaterialIcons name="login" size={30} color="black" />
-              </TouchableOpacity>
-            </View>
-            <View style={loginStyles.viewIcon}>
-              <TouchableOpacity style={loginStyles.button}>
-                <Feather name="more-horizontal" size={30} color="black" />
-              </TouchableOpacity>
-            </View>
-        </View>
-      </View>
-    </Animatable.View>
+    <View style={loginStyles.container}> 
+        {
+          animate.active === LoginConstant.WELCOME ?
+            <WelcomeComponent animate={animate} /> :
+            animate.active === LoginConstant.LOGIN ?
+              <LoginComponent animate={animate} setAuth={
+                (e: boolean) => setAuth(e)}
+              /> :
+              animate.active === LoginConstant.REGISTER ?
+                <RegisterComponent animate={animate} /> :
+                  <MoreComponent animate={animate} />
+        }
+        <OptionsComponent animate={animate} 
+          setAnimate={(e: string) => setAnimate(prevState => ({
+            ...prevState,
+            active: e
+          }))} />
+    </View>
   );
 }

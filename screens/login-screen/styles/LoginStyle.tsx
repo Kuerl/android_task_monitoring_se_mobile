@@ -8,7 +8,7 @@ export const loginStyles = StyleSheet.create({
     flexDirection: 'column',
   },
   flex1: {
-    flex: 3,
+    flex: 3.7,
   },
   loginForm: {
     flex: 1,
@@ -27,7 +27,7 @@ export const loginStyles = StyleSheet.create({
   },
   loginForm__name__: {
     color: 'white',
-    fontFamily: 'SansationRegular',
+    // fontFamily: 'SansationRegular',
     fontSize: 50,
     textShadowColor: 'rgba(225, 225, 225, 0.75)',
     textShadowOffset: {width: -5, height: 5},

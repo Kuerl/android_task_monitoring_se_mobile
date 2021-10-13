@@ -1,3 +1,4 @@
+import {StackScreenProps} from "@react-navigation/stack";
 import React, { useState } from "react";
 import {
   Text,
@@ -12,8 +13,11 @@ import {
 } from "react-native";
 
 import { SocialIcon, AirbnbRating, Card, Icon } from "react-native-elements";
+import {HomeStackList} from "../../HomeStackList";
 
-const InfoScreen: React.FC = () => {
+type InfoProps = StackScreenProps<HomeStackList, "Info">;
+
+const InfoScreen: React.FC<InfoProps> = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -90,7 +94,7 @@ const InfoScreen: React.FC = () => {
       </TouchableWithoutFeedback>
       <TouchableOpacity
         style={styles.btn}
-        onPress={() => console.log("Sign out")}
+        onPress={() => console.log("Log out")}
       >
         <Text style={styles.btnTxt}>Log out</Text>
       </TouchableOpacity>

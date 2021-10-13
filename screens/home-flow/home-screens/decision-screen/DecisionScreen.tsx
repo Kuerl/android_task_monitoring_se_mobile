@@ -11,13 +11,13 @@ const DecisionScreen: React.FC<DecisionProps> = ({ navigation }) => {
     <View style={styles.btnContainer}>
       <TouchableOpacity
         style={styles.btn}
-        onPress={() => navigation.navigate("Personal")}
+        onPress={() => navigation.navigate("PersonalFlow")}
       >
         <Text style={styles.text}>Personal Screen</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.btn}
-        onPress={() => navigation.navigate("Team")}
+        onPress={() => navigation.navigate("TeamFlow")}
       >
         <Text style={styles.text}>Team Screen</Text>
       </TouchableOpacity>

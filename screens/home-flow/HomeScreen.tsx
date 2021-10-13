@@ -4,8 +4,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { HomeStackList } from "./HomeStackList";
 
 import DecisionScreen from "./home-screens/decision-screen/DecisionScreen";
-import PersonalScreen from "./home-screens/personal-screen/PersonalScreen";
-import TeamScreen from "./home-screens/team-screen/TeamScreen";
+import PersonalFlow from "./home-screens/personal-screen/PersonalFlow";
+import TeamFlow from "./home-screens/team-screen/TeamFlow";
 import InfoScreen from "./home-screens/info-screen/InfoScreen";
 
 const HomeStack = createStackNavigator<HomeStackList>();
@@ -19,8 +19,8 @@ const HomeScreen: React.FC = () => {
       }}
     >
       <HomeStack.Screen name="Decision" component={DecisionScreen} />
-      <HomeStack.Screen name="Personal" component={PersonalScreen} />
-      <HomeStack.Screen name="Team" component={TeamScreen} />
+      <HomeStack.Screen name="PersonalFlow" component={PersonalFlow} />
+      <HomeStack.Screen name="TeamFlow" component={TeamFlow} />
       <HomeStack.Screen name="Info" component={InfoScreen} />
     </HomeStack.Navigator>
   );

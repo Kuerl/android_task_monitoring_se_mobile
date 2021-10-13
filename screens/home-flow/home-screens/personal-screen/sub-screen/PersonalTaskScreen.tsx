@@ -1,14 +1,25 @@
 import React from "react";
-import { Text } from "react-native";
+import { Text, StyleSheet } from "react-native";
 
 import CalendarBar from "../../../../../components/CalendarBar";
 
 const PersonalTaskScreen: React.FC = () => {
   return (
     <CalendarBar>
-      <Text>Personal Task Here</Text>
+      <Text style={styles.emptyItemText}>Personal Task Here</Text>
     </CalendarBar>
   );
 };
+
+const styles = StyleSheet.create({
+  emptyItemText: {
+    color: "white",
+    fontWeight: "bold",
+    flex: 1,
+    fontSize: 30,
+    marginTop: 20,
+    alignSelf: "center",
+  },
+});
 
 export default PersonalTaskScreen;

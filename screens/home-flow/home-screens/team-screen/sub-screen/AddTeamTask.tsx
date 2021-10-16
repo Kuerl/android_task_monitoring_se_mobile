@@ -4,11 +4,7 @@ import { Text, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const AddTeamTask: React.FC = () => {
-  return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      <Text>Add Team Task</Text>
-    </SafeAreaView>
-  );
+  return <Text>Add Team Task</Text>;
 };
 
 const styles = StyleSheet.create({

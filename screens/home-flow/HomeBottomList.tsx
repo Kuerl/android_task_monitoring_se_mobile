@@ -1,6 +1,5 @@
 // This type declares sreens(key) and parameters(value) pass into them
-export type HomeStackList = {
-  Decision: undefined;
+export type HomeBottomList = {
   PersonalFlow: undefined;
   TeamFlow: undefined;
   Info: undefined;

@@ -1,28 +1,38 @@
 import React from "react";
+import { View, StyleSheet } from "react-native";
 
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { PersonalTabList } from "./PersonalTabList";
 import PersonalTaskScreen from "./sub-screen/PersonalTaskScreen";
 import AddPersonalTask from "./sub-screen/AddPersonalTask";
 
-const PersonalBottomTab = createBottomTabNavigator<PersonalTabList>();
+const PersonalTopTab = createMaterialTopTabNavigator<PersonalTabList>();
 
 const PersonalFlow: React.FC = () => {
   return (
-    <PersonalBottomTab.Navigator
-      initialRouteName="PersonalTask"
-      screenOptions={{ headerShown: false }}
-    >
-      <PersonalBottomTab.Screen
-        name="PersonalTask"
-        component={PersonalTaskScreen}
-      />
-      <PersonalBottomTab.Screen
-        name="AddPersonalTask"
-        component={AddPersonalTask}
-      />
-    </PersonalBottomTab.Navigator>
+    <>
+      <View style={styles.header} />
+      <PersonalTopTab.Navigator initialRouteName="PersonalTask">
+        <PersonalTopTab.Screen
+          name="PersonalTask"
+          component={PersonalTaskScreen}
+          options={{ title: "View Tasks" }}
+        />
+        <PersonalTopTab.Screen
+          name="AddPersonalTask"
+          component={AddPersonalTask}
+          options={{ title: "Add New Tasks" }}
+        />
+      </PersonalTopTab.Navigator>
+    </>
   );
 };
+
+const styles = StyleSheet.create({
+  header: {
+    paddingTop: 18,
+    backgroundColor: "white",
+  }
+})
 
 export default PersonalFlow;

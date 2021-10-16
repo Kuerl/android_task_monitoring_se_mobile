@@ -4,11 +4,7 @@ import { Text, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const TeamChat: React.FC = () => {
-  return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      <Text>Team Chat</Text>
-    </SafeAreaView>
-  );
+  return <Text>Team Chat</Text>;
 };
 
 const styles = StyleSheet.create({

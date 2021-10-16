@@ -3,11 +3,7 @@ import { Text, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const AddPersonalTask: React.FC = () => {
-  return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      <Text>Add Personal Task</Text>
-    </SafeAreaView>
-  );
+  return <Text>Add Personal Task</Text>;
 };
 
 const styles = StyleSheet.create({

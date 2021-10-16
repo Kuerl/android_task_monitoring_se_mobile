@@ -7,5 +7,5 @@ export type TeamTabList = {
 
 export type TeamStackList = {
   ManageTeam: undefined;
-  TeamBottom: undefined;
+  TeamTopTab: undefined;
 }

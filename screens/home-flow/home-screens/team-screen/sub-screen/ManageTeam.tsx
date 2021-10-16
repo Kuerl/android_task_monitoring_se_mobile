@@ -12,7 +12,7 @@ const ManageTeam: React.FC<TeamStackProps> = ({ navigation }) => {
     <SafeAreaView style={styles.container} edges={["top"]}>
       <TouchableOpacity
         style={styles.btn}
-        onPress={() => navigation.navigate("TeamBottom")}
+        onPress={() => navigation.navigate("TeamTopTab")}
       >
         <Text style={styles.text}>Software Engineer Team</Text>
       </TouchableOpacity>

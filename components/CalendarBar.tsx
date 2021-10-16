@@ -6,9 +6,10 @@ import { CalendarProvider, ExpandableCalendar } from "react-native-calendars";
 const CalendarBar: React.FC = ({ children }) => {
   return (
     <CalendarProvider date={new Date()}>
-      <View style={styles.header}>
-        <ExpandableCalendar />
-      </View>
+      {/* <View style={styles.header}> */}
+      {/*   <ExpandableCalendar /> */}
+      {/* </View> */}
+      <ExpandableCalendar />
       {children}
     </CalendarProvider>
   );

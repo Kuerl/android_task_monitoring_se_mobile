@@ -1,43 +1,53 @@
-import React, { useEffect, useState } from 'react';
-import { TouchableOpacity, Text, View, Animated } from 'react-native';
-import LoginScreen from './login-screen/LoginScreen';
+import React, { useEffect, useState } from "react";
 
+import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 
-import { NavigationContainer } from '@react-navigation/native';
-import SplashScreen from './splash/SplashScreen';
-import HomeScreen from './home-screen/HomeScreen';
+import LoginScreen from "./login-screen/LoginScreen";
+import SplashScreen from "./splash/SplashScreen";
+import HomeScreen from "./home-flow/HomeScreen";
+
+const globalTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: "transparent",
+  },
+};
 
 export default function MainScreen() {
   const [baseState, setBaseState] = useState({
     authentication: false,
     unsplash: false,
   });
-  
+
   useEffect(() => {
     setTimeout(() => {
-      setBaseState(
-        prevState => ({
-          ...prevState, unsplash: true
-        })
-      )}, 3000);
+      setBaseState((prevState) => ({
+        ...prevState,
+        unsplash: true,
+      }));
+    }, 3000);
     return () => {
-      baseState
-    }
-  }, [baseState])
+      baseState;
+    };
+  }, [baseState]);
   return (
-    <>
-      {
-        (baseState.unsplash === true && baseState.authentication == false) ?
-          <LoginScreen baseState={baseState} setAuth={
-            (e: boolean) => setBaseState(prevState => ({
+    <NavigationContainer theme={globalTheme}>
+      {baseState.unsplash === true && baseState.authentication == false ? (
+        <LoginScreen
+          baseState={baseState}
+          setAuth={(e: boolean) =>
+            setBaseState((prevState) => ({
               ...prevState,
               authentication: e,
-            }))}
-          /> :
-          (baseState.unsplash === true && baseState.authentication === true) ?
-            <HomeScreen />:
-            <SplashScreen />
-      }
-    </>
+            }))
+          }
+        />
+      ) : baseState.unsplash === true && baseState.authentication === true ? (
+        <HomeScreen />
+      ) : (
+        <SplashScreen />
+      )}
+    </NavigationContainer>
   );
 }

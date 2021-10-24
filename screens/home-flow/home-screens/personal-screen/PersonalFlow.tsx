@@ -30,7 +30,7 @@ const PersonalFlow: React.FC = () => {
 
 const styles = StyleSheet.create({
   header: {
-    paddingTop: 18,
+    paddingTop: 28,
     backgroundColor: "white",
   }
 })

@@ -1,5 +1,4 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
 
 import { TeamTabList, TeamStackList } from "./TeamFlowList";
 import ManageTeam from "./sub-screen/ManageTeam";
@@ -7,48 +6,33 @@ import TeamTaskScreen from "./sub-screen/TeamTaskScreen";
 import AddTeamTask from "./sub-screen/AddTeamTask";
 import TeamChat from "./sub-screen/TeamChat";
 import { createStackNavigator } from "@react-navigation/stack";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 
 const TeamStack = createStackNavigator<TeamStackList>();
-const TeamTopTab = createMaterialTopTabNavigator<TeamTabList>();
-const TeamBottomTab = createMaterialBottomTabNavigator<TeamTabList>();
+const TeamDrawer = createDrawerNavigator<TeamTabList>();
 
 const TeamBottomComponent: React.FC = () => {
   return (
-    <TeamBottomTab.Navigator
+    <TeamDrawer.Navigator
       initialRouteName="TeamTask"
-      barStyle={styles.tabBar}
-      shifting={true}
+      screenOptions={{ headerShown: false }}
     >
-      <TeamBottomTab.Screen
+      <TeamDrawer.Screen
         name="TeamTask"
         component={TeamTaskScreen}
-        options={{
-          tabBarLabel: "View Team Tasks",
-          tabBarIcon: "file-document",
-          tabBarColor: "#C9E7F8",
-        }}
+        options={{ title: "View Team Tasks" }}
       />
-      <TeamBottomTab.Screen
+      <TeamDrawer.Screen
         name="AddTeamTask"
         component={AddTeamTask}
-        options={{
-          tabBarLabel: "Create Team Tasks",
-          tabBarIcon: "contacts",
-          tabBarColor: "#9FD5C9",
-        }}
+        options={{ title: "Create Team Tasks" }}
       />
-      <TeamBottomTab.Screen
+      <TeamDrawer.Screen
         name="TeamChat"
         component={TeamChat}
-        options={{
-          tabBarLabel: "Team Chat",
-          tabBarIcon: "image-album",
-          tabBarColor: "#F7EAA2",
-        }}
+        options={{ title: "Team Chat" }}
       />
-    </TeamBottomTab.Navigator>
+    </TeamDrawer.Navigator>
   );
 };
 
@@ -59,15 +43,13 @@ const TeamFlow: React.FC = () => {
       screenOptions={{ headerShown: false }}
     >
       <TeamStack.Screen name="ManageTeam" component={ManageTeam} />
-      <TeamStack.Screen name="TeamBottomTab" component={TeamBottomComponent} />
+      <TeamStack.Screen
+        name="TeamBottomTab"
+        component={TeamBottomComponent}
+        options={{ gestureEnabled: false }}
+      />
     </TeamStack.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: "white",
-  },
-});
 
 export default TeamFlow;

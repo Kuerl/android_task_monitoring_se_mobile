@@ -23,6 +23,7 @@ const ManageTeam: React.FC<TeamStackProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "rgba(52, 52, 52, 0.4)",
   },
   btn: {
     marginHorizontal: 30,

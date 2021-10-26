@@ -1,37 +1,57 @@
 import React from "react";
+import { StyleSheet } from "react-native";
 
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import { HomeDrawerList } from "./HomeDrawerList";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import { HomeScreensList } from "./HomeScreensList";
 
 import PersonalFlow from "./home-screens/personal-screen/PersonalFlow";
 import TeamFlow from "./home-screens/team-screen/TeamFlow";
 import InfoScreen from "./home-screens/info-screen/InfoScreen";
 
-const HomeDrawer = createDrawerNavigator<HomeDrawerList>();
+const HomeBottomTab = createMaterialBottomTabNavigator<HomeScreensList>();
 
 const HomeScreen: React.FC = () => {
   return (
-    <HomeDrawer.Navigator
+    <HomeBottomTab.Navigator
       initialRouteName="PersonalFlow"
-      screenOptions={{ headerShown: false }}
+      barStyle={styles.tabBar}
+      shifting={true}
     >
-      <HomeDrawer.Screen
+      <HomeBottomTab.Screen
         name="PersonalFlow"
         component={PersonalFlow}
-        options={{ title: "Personal Tasks" }}
+        options={{
+          tabBarLabel: "Personal Tasks",
+          tabBarIcon: "file-document",
+          tabBarColor: "#C9E7F8",
+        }}
       />
-      <HomeDrawer.Screen
+      <HomeBottomTab.Screen
         name="TeamFlow"
         component={TeamFlow}
-        options={{ title: "Team Tasks" }}
+        options={{
+          tabBarLabel: "Team Tasks",
+          tabBarIcon: "contacts",
+          tabBarColor: "#9FD5C9",
+        }}
       />
-      <HomeDrawer.Screen
+      <HomeBottomTab.Screen
         name="Info"
         component={InfoScreen}
-        options={{ title: "Your information" }}
+        options={{
+          tabBarLabel: "Information",
+          tabBarIcon: "image-album",
+          tabBarColor: "#F7EAA2",
+        }}
       />
-    </HomeDrawer.Navigator>
+    </HomeBottomTab.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  tabBar: {
+    backgroundColor: "white",
+  },
+});
 
 export default HomeScreen;

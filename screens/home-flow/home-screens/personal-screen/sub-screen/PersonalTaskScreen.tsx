@@ -6,17 +6,21 @@ import TaskTimeline from "../../../../../components/TaskTimeline";
 
 const PersonalTaskScreen: React.FC = () => {
   return (
-    <>
+    <View style={styles.container}>
       <View style={styles.header} />
       <CalendarBar>
         {/* <Text style={styles.emptyItemText}>Personal Task Here</Text> */}
         <TaskTimeline />
       </CalendarBar>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "rgba(52, 52, 52, 0.4)",
+  },
   header: {
     paddingTop: 30,
     backgroundColor: "white",

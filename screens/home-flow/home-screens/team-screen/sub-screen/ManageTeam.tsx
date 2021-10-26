@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { StackScreenProps } from "@react-navigation/stack";
 import { TeamStackList } from "../TeamFlowList";
+import { FAB } from "react-native-elements";
 
 type TeamStackProps = StackScreenProps<TeamStackList, "ManageTeam">;
 
@@ -16,6 +17,11 @@ const ManageTeam: React.FC<TeamStackProps> = ({ navigation }) => {
       >
         <Text style={styles.text}>Software Engineer Team</Text>
       </TouchableOpacity>
+      <FAB
+        title="Create Team"
+        placement="right"
+        onPress={() => navigation.navigate("CreateTeam")}
+      />
     </SafeAreaView>
   );
 };

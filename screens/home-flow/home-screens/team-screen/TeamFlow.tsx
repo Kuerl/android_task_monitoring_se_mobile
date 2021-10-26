@@ -1,21 +1,45 @@
 import React from "react";
+import { Text, StyleSheet } from "react-native";
 
 import { TeamTabList, TeamStackList } from "./TeamFlowList";
 import ManageTeam from "./sub-screen/ManageTeam";
 import TeamTaskScreen from "./sub-screen/TeamTaskScreen";
 import AddTeamTask from "./sub-screen/AddTeamTask";
 import TeamChat from "./sub-screen/TeamChat";
+import TeamInfo from "./sub-screen/TeamInfo";
+import CreateTeam from "./sub-screen/CreateTeam";
+
 import { createStackNavigator } from "@react-navigation/stack";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItem,
+  DrawerItemList,
+} from "@react-navigation/drawer";
 
 const TeamStack = createStackNavigator<TeamStackList>();
 const TeamDrawer = createDrawerNavigator<TeamTabList>();
+
+function CustomDrawerContent(props: any) {
+  return (
+    <DrawerContentScrollView {...props}>
+      <Text style={styles.drawerTxt}>Hello, Anh Viet</Text>
+      <DrawerItem
+        label="Manage All Teams"
+        onPress={() => props.navigation.navigate("ManageTeam")}
+      />
+      <Text style={styles.teamName}>Software Engineer Team</Text>
+      <DrawerItemList {...props} />
+    </DrawerContentScrollView>
+  );
+}
 
 const TeamBottomComponent: React.FC = () => {
   return (
     <TeamDrawer.Navigator
       initialRouteName="TeamTask"
       screenOptions={{ headerShown: false }}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <TeamDrawer.Screen
         name="TeamTask"
@@ -32,6 +56,11 @@ const TeamBottomComponent: React.FC = () => {
         component={TeamChat}
         options={{ title: "Team Chat" }}
       />
+      <TeamDrawer.Screen
+        name="TeamInfo"
+        component={TeamInfo}
+        options={{ title: "Your Team Information" }}
+      />
     </TeamDrawer.Navigator>
   );
 };
@@ -43,6 +72,7 @@ const TeamFlow: React.FC = () => {
       screenOptions={{ headerShown: false }}
     >
       <TeamStack.Screen name="ManageTeam" component={ManageTeam} />
+      <TeamStack.Screen name="CreateTeam" component={CreateTeam} />
       <TeamStack.Screen
         name="TeamBottomTab"
         component={TeamBottomComponent}
@@ -51,5 +81,21 @@ const TeamFlow: React.FC = () => {
     </TeamStack.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  drawerTxt: {
+    paddingLeft: 10,
+    paddingBottom: 20,
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  teamName: {
+    paddingLeft: 10,
+    paddingVertical: 10,
+    fontSize: 16,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+  },
+});
 
 export default TeamFlow;

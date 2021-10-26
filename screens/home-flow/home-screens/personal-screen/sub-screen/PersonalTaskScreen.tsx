@@ -1,19 +1,26 @@
 import React from "react";
-import { Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 import CalendarBar from "../../../../../components/CalendarBar";
 import TaskTimeline from "../../../../../components/TaskTimeline";
 
 const PersonalTaskScreen: React.FC = () => {
   return (
-    <CalendarBar>
-      {/* <Text style={styles.emptyItemText}>Personal Task Here</Text> */}
-      <TaskTimeline />
-    </CalendarBar>
+    <>
+      <View style={styles.header} />
+      <CalendarBar>
+        {/* <Text style={styles.emptyItemText}>Personal Task Here</Text> */}
+        <TaskTimeline />
+      </CalendarBar>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
+  header: {
+    paddingTop: 30,
+    backgroundColor: "white",
+  },
   emptyItemText: {
     color: "white",
     fontWeight: "bold",

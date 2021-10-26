@@ -1,57 +1,37 @@
 import React from "react";
-import { StyleSheet } from "react-native";
 
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { HomeBottomList } from "./HomeBottomList";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { HomeDrawerList } from "./HomeDrawerList";
 
 import PersonalFlow from "./home-screens/personal-screen/PersonalFlow";
 import TeamFlow from "./home-screens/team-screen/TeamFlow";
 import InfoScreen from "./home-screens/info-screen/InfoScreen";
 
-const HomeMaterialBottom = createMaterialBottomTabNavigator<HomeBottomList>();
+const HomeDrawer = createDrawerNavigator<HomeDrawerList>();
 
 const HomeScreen: React.FC = () => {
   return (
-    <HomeMaterialBottom.Navigator
+    <HomeDrawer.Navigator
       initialRouteName="PersonalFlow"
-      barStyle={styles.tabBar}
-      shifting={true}
+      screenOptions={{ headerShown: false }}
     >
-      <HomeMaterialBottom.Screen
+      <HomeDrawer.Screen
         name="PersonalFlow"
         component={PersonalFlow}
-        options={{
-          tabBarLabel: "Personal Tasks",
-          tabBarIcon: "file-document",
-          tabBarColor: "#C9E7F8",
-        }}
+        options={{ title: "Personal Tasks" }}
       />
-      <HomeMaterialBottom.Screen
+      <HomeDrawer.Screen
         name="TeamFlow"
         component={TeamFlow}
-        options={{
-          tabBarLabel: "Team Tasks",
-          tabBarIcon: "contacts",
-          tabBarColor: "#9FD5C9",
-        }}
+        options={{ title: "Team Tasks" }}
       />
-      <HomeMaterialBottom.Screen
+      <HomeDrawer.Screen
         name="Info"
         component={InfoScreen}
-        options={{
-          tabBarLabel: "Settings",
-          tabBarIcon: "image-album",
-          tabBarColor: "#F7EAA2",
-        }}
+        options={{ title: "Your information" }}
       />
-    </HomeMaterialBottom.Navigator>
+    </HomeDrawer.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: "white",
-  },
-});
 
 export default HomeScreen;

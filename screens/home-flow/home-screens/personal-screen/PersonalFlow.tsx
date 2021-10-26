@@ -1,38 +1,46 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { PersonalTabList } from "./PersonalTabList";
 import PersonalTaskScreen from "./sub-screen/PersonalTaskScreen";
 import AddPersonalTask from "./sub-screen/AddPersonalTask";
 
-const PersonalTopTab = createMaterialTopTabNavigator<PersonalTabList>();
+const PersonalBottomTab = createMaterialBottomTabNavigator<PersonalTabList>();
 
 const PersonalFlow: React.FC = () => {
   return (
-    <>
-      <View style={styles.header} />
-      <PersonalTopTab.Navigator initialRouteName="PersonalTask">
-        <PersonalTopTab.Screen
-          name="PersonalTask"
-          component={PersonalTaskScreen}
-          options={{ title: "View Tasks" }}
-        />
-        <PersonalTopTab.Screen
-          name="AddPersonalTask"
-          component={AddPersonalTask}
-          options={{ title: "Add New Tasks" }}
-        />
-      </PersonalTopTab.Navigator>
-    </>
+    <PersonalBottomTab.Navigator
+      initialRouteName="PersonalTask"
+      barStyle={styles.tabBar}
+      shifting={true}
+    >
+      <PersonalBottomTab.Screen
+        name="PersonalTask"
+        component={PersonalTaskScreen}
+        options={{
+          tabBarLabel: "View Personal Tasks",
+          tabBarIcon: "file-document",
+          tabBarColor: "#C9E7F8",
+        }}
+      />
+      <PersonalBottomTab.Screen
+        name="AddPersonalTask"
+        component={AddPersonalTask}
+        options={{
+          tabBarLabel: "Create Personal Tasks",
+          tabBarIcon: "contacts",
+          tabBarColor: "#9FD5C9",
+        }}
+      />
+    </PersonalBottomTab.Navigator>
   );
 };
 
 const styles = StyleSheet.create({
-  header: {
-    paddingTop: 28,
+  tabBar: {
     backgroundColor: "white",
-  }
-})
+  },
+});
 
 export default PersonalFlow;

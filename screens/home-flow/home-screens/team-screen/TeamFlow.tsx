@@ -8,22 +8,47 @@ import AddTeamTask from "./sub-screen/AddTeamTask";
 import TeamChat from "./sub-screen/TeamChat";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 
 const TeamStack = createStackNavigator<TeamStackList>();
 const TeamTopTab = createMaterialTopTabNavigator<TeamTabList>();
+const TeamBottomTab = createMaterialBottomTabNavigator<TeamTabList>();
 
-const TeamTopComponent: React.FC = () => {
+const TeamBottomComponent: React.FC = () => {
   return (
-    <>
-      <View style={styles.header} />
-      <TeamTopTab.Navigator
-        initialRouteName="TeamTask"
-      >
-        <TeamTopTab.Screen name="TeamTask" component={TeamTaskScreen} options={{ title: "View Tasks"}} />
-        <TeamTopTab.Screen name="AddTeamTask" component={AddTeamTask} options={{ title: "Add New Tasks"}}/>
-        <TeamTopTab.Screen name="TeamChat" component={TeamChat} options={{ title: "Chat Team" }} />
-      </TeamTopTab.Navigator>
-    </>
+    <TeamBottomTab.Navigator
+      initialRouteName="TeamTask"
+      barStyle={styles.tabBar}
+      shifting={true}
+    >
+      <TeamBottomTab.Screen
+        name="TeamTask"
+        component={TeamTaskScreen}
+        options={{
+          tabBarLabel: "View Team Tasks",
+          tabBarIcon: "file-document",
+          tabBarColor: "#C9E7F8",
+        }}
+      />
+      <TeamBottomTab.Screen
+        name="AddTeamTask"
+        component={AddTeamTask}
+        options={{
+          tabBarLabel: "Create Team Tasks",
+          tabBarIcon: "contacts",
+          tabBarColor: "#9FD5C9",
+        }}
+      />
+      <TeamBottomTab.Screen
+        name="TeamChat"
+        component={TeamChat}
+        options={{
+          tabBarLabel: "Team Chat",
+          tabBarIcon: "image-album",
+          tabBarColor: "#F7EAA2",
+        }}
+      />
+    </TeamBottomTab.Navigator>
   );
 };
 
@@ -34,17 +59,15 @@ const TeamFlow: React.FC = () => {
       screenOptions={{ headerShown: false }}
     >
       <TeamStack.Screen name="ManageTeam" component={ManageTeam} />
-      <TeamStack.Screen name="TeamTopTab" component={TeamTopComponent} />
+      <TeamStack.Screen name="TeamBottomTab" component={TeamBottomComponent} />
     </TeamStack.Navigator>
   );
 };
 
 const styles = StyleSheet.create({
-  header: {
-    paddingTop: 28,
+  tabBar: {
     backgroundColor: "white",
-  }
-})
-
+  },
+});
 
 export default TeamFlow;

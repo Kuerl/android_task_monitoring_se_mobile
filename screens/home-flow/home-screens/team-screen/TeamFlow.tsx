@@ -1,6 +1,8 @@
 import React from "react";
 import { Text, StyleSheet } from "react-native";
 
+import { Divider } from "react-native-elements";
+
 import { TeamTabList, TeamStackList } from "./TeamFlowList";
 import ManageTeam from "./sub-screen/ManageTeam";
 import TeamTaskScreen from "./sub-screen/TeamTaskScreen";
@@ -8,11 +10,11 @@ import AddTeamTask from "./sub-screen/AddTeamTask";
 import TeamChat from "./sub-screen/TeamChat";
 import TeamInfo from "./sub-screen/TeamInfo";
 import CreateTeam from "./sub-screen/CreateTeam";
+import DrawerContent from "../../../../components/DrawerContent";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import {
   createDrawerNavigator,
-  DrawerContentScrollView,
   DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
@@ -22,15 +24,15 @@ const TeamDrawer = createDrawerNavigator<TeamTabList>();
 
 function CustomDrawerContent(props: any) {
   return (
-    <DrawerContentScrollView {...props}>
-      <Text style={styles.drawerTxt}>Hello, Anh Viet</Text>
+    <DrawerContent>
       <DrawerItem
         label="Manage All Teams"
         onPress={() => props.navigation.navigate("ManageTeam")}
       />
+      <Divider style={styles.subDivider} />
       <Text style={styles.teamName}>Software Engineer Team</Text>
       <DrawerItemList {...props} />
-    </DrawerContentScrollView>
+    </DrawerContent>
   );
 }
 
@@ -83,18 +85,16 @@ const TeamFlow: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  drawerTxt: {
-    paddingLeft: 10,
-    paddingBottom: 20,
-    fontSize: 24,
-    fontWeight: "bold",
-  },
   teamName: {
     paddingLeft: 10,
     paddingVertical: 10,
     fontSize: 16,
     fontWeight: "bold",
-    textDecorationLine: "underline",
+    // textDecorationLine: "underline",
+  },
+  subDivider: {
+    width: "85%",
+    alignSelf: "flex-end",
   },
 });
 

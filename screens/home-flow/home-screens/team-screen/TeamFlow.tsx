@@ -40,7 +40,7 @@ function CustomDrawerContent(props: any) {
   );
 }
 
-const TeamBottomComponent: React.FC = () => {
+const TeamDrawerComponent: React.FC = () => {
   return (
     <TeamDrawer.Navigator
       initialRouteName="TeamTask"
@@ -81,7 +81,7 @@ const TeamFlow: React.FC = () => {
       <TeamStack.Screen name="CreateTeam" component={CreateTeam} />
       <TeamStack.Screen
         name="TeamBottomTab"
-        component={TeamBottomComponent}
+        component={TeamDrawerComponent}
         options={{ gestureEnabled: false }}
       />
     </TeamStack.Navigator>

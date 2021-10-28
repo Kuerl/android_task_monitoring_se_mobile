@@ -18,7 +18,7 @@ const ManageTeam: React.FC<TeamStackProps> = ({ navigation }) => {
         <Text style={styles.text}>Software Engineer Team</Text>
       </TouchableOpacity>
       <FAB
-        title="Create Team"
+        icon={{ type: "material-community", name: "shape-plus", color: "white" }}
         placement="right"
         onPress={() => navigation.navigate("CreateTeam")}
       />

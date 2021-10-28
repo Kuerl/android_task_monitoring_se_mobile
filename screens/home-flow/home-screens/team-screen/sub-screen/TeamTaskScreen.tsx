@@ -1,10 +1,15 @@
+import { DrawerScreenProps } from "@react-navigation/drawer";
 import React from "react";
 import { View, StyleSheet } from "react-native";
+import { FAB } from "react-native-elements";
 
 import CalendarBar from "../../../../../components/CalendarBar";
 import TaskTimeline from "../../../../../components/TaskTimeline";
+import { TeamTabList } from "../TeamFlowList";
 
-const TeamTaskScreen: React.FC = () => {
+type TeamDrawerProps = DrawerScreenProps<TeamTabList, "TeamTask">;
+
+const TeamTaskScreen: React.FC<TeamDrawerProps> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header} />
@@ -12,6 +17,12 @@ const TeamTaskScreen: React.FC = () => {
         {/* <Text style={styles.emptyItemText}>Team Task Here</Text> */}
         <TaskTimeline />
       </CalendarBar>
+      <FAB
+        // title="Create Team"
+        icon={{ type: "font-awesome", name: "calendar-plus-o", color: "white" }}
+        placement="right"
+        onPress={() => navigation.navigate("AddTeamTask")}
+      />
     </View>
   );
 };

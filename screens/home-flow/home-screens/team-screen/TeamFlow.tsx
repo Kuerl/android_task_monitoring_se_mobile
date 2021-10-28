@@ -29,6 +29,10 @@ function CustomDrawerContent(props: any) {
         label="Manage All Teams"
         onPress={() => props.navigation.navigate("ManageTeam")}
       />
+      <DrawerItem
+        label="Create New Team"
+        onPress={() => props.navigation.navigate("CreateTeam")}
+      />
       <Divider style={styles.subDivider} />
       <Text style={styles.teamName}>Software Engineer Team</Text>
       <DrawerItemList {...props} />

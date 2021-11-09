@@ -19,7 +19,7 @@ export default function App() {
   } else {
   return (
     <SafeAreaProvider>
-      <ImageBackground source={require('./assets/images/background3.jpg')} 
+      <ImageBackground source={require('./assets/images/background4.jpg')} 
         style={globalStyles.container}
         imageStyle={{opacity: 0.9, backgroundColor: '#000000'}}>
           <MainScreen />

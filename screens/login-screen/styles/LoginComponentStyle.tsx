@@ -40,8 +40,16 @@ export const loginComponentStyle = StyleSheet.create({
   login__form__submit: {
     alignItems: 'flex-end',
     marginTop: 10,
-  }
-});5
+  },
+  login__warning: {
+    paddingRight: 20,
+  },
+  login__warning__text: {
+    textAlign: 'right',
+    color: 'red',
+    fontWeight: '700',
+  },
+});
 
 export const moreComponent = StyleSheet.create({
   login__form__input: {

@@ -13,10 +13,8 @@ export default function SplashScreen() {
       >
         <Animatable.View animation='zoomIn' delay={500}>
           <Animatable.View animation='zoomOut' delay={2500}>
-          <LinearGradient colors={['#F90F89', '#A3E1DE', '#A3E1DE']} style={splashScreenStyle.logoView}>
             <Image style={splashScreenStyle.logo}
-              source={require('../../assets/images/iulogo.png')} />
-          </LinearGradient>
+              source={require('../../assets/images/atm_logo.png')} />
           </Animatable.View>
         </Animatable.View>
     </View>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 
-import LoginScreen from "./login-screen/LoginScreen";
+import WelcomeScreen from "./login-screen/WelcomeScreen";
 import SplashScreen from "./splash/SplashScreen";
 import HomeScreen from "./home-flow/HomeScreen";
 
@@ -34,7 +34,7 @@ export default function MainScreen() {
   return (
     <NavigationContainer theme={globalTheme}>
       {baseState.unsplash === true && baseState.authentication == false ? (
-        <LoginScreen
+        <WelcomeScreen
           baseState={baseState}
           setAuth={(e: boolean) =>
             setBaseState((prevState) => ({

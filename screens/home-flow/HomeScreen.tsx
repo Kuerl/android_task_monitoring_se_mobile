@@ -2,11 +2,11 @@ import React from "react";
 import { StyleSheet } from "react-native";
 
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { HomeBottomList } from "./HomeBottomList";
 
 import PersonalFlow from "./home-screens/personal-screen/PersonalFlow";
 import TeamFlow from "./home-screens/team-screen/TeamFlow";
 import InfoScreen from "./home-screens/info-screen/InfoScreen";
+import { HomeBottomList } from "../../constants/Constant";
 
 const HomeMaterialBottom = createMaterialBottomTabNavigator<HomeBottomList>();
 

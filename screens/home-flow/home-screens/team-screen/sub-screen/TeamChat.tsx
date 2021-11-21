@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(52, 52, 52, 0.8)",
   },
   msgView: {
-    paddingTop: 40,
+    // paddingTop: 40,
     marginHorizontal: 15,
     marginBottom: 10,
   },

@@ -1,5 +1,4 @@
 import React from "react";
-import { Text, StyleSheet } from "react-native";
 
 import {
   createDrawerNavigator,
@@ -24,7 +23,7 @@ const PersonalFlow: React.FC = () => {
   return (
     <PersonalDrawer.Navigator
       initialRouteName="PersonalTask"
-      screenOptions={{ headerShown: false }}
+      // screenOptions={{ headerShown: false }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <PersonalDrawer.Screen

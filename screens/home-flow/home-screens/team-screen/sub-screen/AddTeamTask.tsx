@@ -13,7 +13,7 @@ const AddTeamTask: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 40,
+    // paddingTop: 40,
     backgroundColor: "rgba(52, 52, 52, 0.8)",
   },
 });

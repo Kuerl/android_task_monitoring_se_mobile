@@ -44,7 +44,7 @@ const TeamDrawerComponent: React.FC = () => {
   return (
     <TeamDrawer.Navigator
       initialRouteName="TeamTask"
-      screenOptions={{ headerShown: false }}
+      // screenOptions={{ headerShown: false }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <TeamDrawer.Screen

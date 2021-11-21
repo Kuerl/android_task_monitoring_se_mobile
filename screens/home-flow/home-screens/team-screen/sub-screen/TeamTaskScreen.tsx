@@ -18,8 +18,8 @@ const TeamTaskScreen: React.FC<TeamDrawerProps> = ({ navigation }) => {
         <TaskTimeline />
       </CalendarBar>
       <FAB
-        // title="Create Team"
-        icon={{ type: "font-awesome", name: "calendar-plus-o", color: "white" }}
+        color="#439DE4"
+        icon={{ type: "feather", name: "plus", color: "white" }}
         placement="right"
         onPress={() => navigation.navigate("AddTeamTask")}
       />
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(52, 52, 52, 0.4)",
   },
   header: {
-    paddingTop: 35,
+    // paddingTop: 35,
     backgroundColor: "white",
   },
   emptyItemText: {

@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, ScrollView } from "react-native";
 
 import { Avatar, Card } from "react-native-elements";
 
@@ -38,7 +38,7 @@ const TeamInfo: React.FC = () => {
   ];
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Card containerStyle={styles.cardContainer}>
         <Card.Title style={styles.teamName}>Software Engineer Team</Card.Title>
         <Card.Divider color="black" />
@@ -67,7 +67,7 @@ const TeamInfo: React.FC = () => {
           );
         })}
       </Card>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "rgba(52, 52, 52, 0.6)",
-    paddingTop: 80,
+    // paddingTop: 80,
   },
   cardContainer: {
     backgroundColor: "rgba(255, 255, 255, 0.6)",

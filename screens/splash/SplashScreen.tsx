@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Animatable from 'react-native-animatable';
 
 export default function SplashScreen() {
+  const state = { back: false }
   return (
     <View
       style={splashScreenStyle.container}
@@ -13,10 +14,15 @@ export default function SplashScreen() {
       >
         <Animatable.View animation='zoomIn' delay={500}>
           <Animatable.View animation='zoomOut' delay={2500}>
-          <LinearGradient colors={['#F90F89', '#A3E1DE', '#A3E1DE']} style={splashScreenStyle.logoView}>
-            <Image style={splashScreenStyle.logo}
-              source={require('../../assets/images/iulogo.png')} />
-          </LinearGradient>
+            <Animatable.Image style={splashScreenStyle.logo} animation={{
+                from: {
+                  transform: [{ rotate: state.back?'0deg': '360deg'}]
+                  },
+                  to: {
+                      transform: [{ rotate: state.back?'360deg' : "deg0"}]
+                  }
+              }}
+              source={require('../../assets/images/atm_logo.png')} />
           </Animatable.View>
         </Animatable.View>
     </View>

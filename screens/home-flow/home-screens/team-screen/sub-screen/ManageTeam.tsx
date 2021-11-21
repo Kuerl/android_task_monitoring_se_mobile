@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { StackScreenProps } from "@react-navigation/stack";
 import { TeamStackList } from "../TeamFlowList";
+import { FAB } from "react-native-elements";
 
 type TeamStackProps = StackScreenProps<TeamStackList, "ManageTeam">;
 
@@ -12,10 +13,15 @@ const ManageTeam: React.FC<TeamStackProps> = ({ navigation }) => {
     <SafeAreaView style={styles.container} edges={["top"]}>
       <TouchableOpacity
         style={styles.btn}
-        onPress={() => navigation.navigate("TeamTopTab")}
+        onPress={() => navigation.navigate("TeamBottomTab")}
       >
         <Text style={styles.text}>Software Engineer Team</Text>
       </TouchableOpacity>
+      <FAB
+        icon={{ type: "material-community", name: "shape-plus", color: "white" }}
+        placement="right"
+        onPress={() => navigation.navigate("CreateTeam")}
+      />
     </SafeAreaView>
   );
 };
@@ -23,6 +29,7 @@ const ManageTeam: React.FC<TeamStackProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "rgba(52, 52, 52, 0.4)",
   },
   btn: {
     marginHorizontal: 30,

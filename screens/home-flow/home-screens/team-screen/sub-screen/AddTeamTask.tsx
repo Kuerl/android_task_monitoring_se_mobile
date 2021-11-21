@@ -1,15 +1,20 @@
 import React from "react";
-import { Text, StyleSheet } from "react-native";
-
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, ScrollView } from "react-native";
+import AddTaskForm from "../../../../../components/AddTaskForm";
 
 const AddTeamTask: React.FC = () => {
-  return <Text>Add Team Task</Text>;
+  return (
+    <ScrollView style={styles.container}>
+      <AddTaskForm />
+    </ScrollView>
+  );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // paddingTop: 40,
+    backgroundColor: "rgba(52, 52, 52, 0.8)",
   },
 });
 

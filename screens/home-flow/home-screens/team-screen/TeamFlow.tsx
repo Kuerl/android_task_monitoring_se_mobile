@@ -1,29 +1,73 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { Text, StyleSheet } from "react-native";
+
+import { Divider } from "react-native-elements";
 
 import { TeamTabList, TeamStackList } from "./TeamFlowList";
 import ManageTeam from "./sub-screen/ManageTeam";
 import TeamTaskScreen from "./sub-screen/TeamTaskScreen";
 import AddTeamTask from "./sub-screen/AddTeamTask";
 import TeamChat from "./sub-screen/TeamChat";
+import TeamInfo from "./sub-screen/TeamInfo";
+import CreateTeam from "./sub-screen/CreateTeam";
+import DrawerContent from "../../../../components/DrawerContent";
+
 import { createStackNavigator } from "@react-navigation/stack";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import {
+  createDrawerNavigator,
+  DrawerItem,
+  DrawerItemList,
+} from "@react-navigation/drawer";
 
 const TeamStack = createStackNavigator<TeamStackList>();
-const TeamTopTab = createMaterialTopTabNavigator<TeamTabList>();
+const TeamDrawer = createDrawerNavigator<TeamTabList>();
 
-const TeamTopComponent: React.FC = () => {
+function CustomDrawerContent(props: any) {
   return (
-    <>
-      <View style={styles.header} />
-      <TeamTopTab.Navigator
-        initialRouteName="TeamTask"
-      >
-        <TeamTopTab.Screen name="TeamTask" component={TeamTaskScreen} options={{ title: "View Tasks"}} />
-        <TeamTopTab.Screen name="AddTeamTask" component={AddTeamTask} options={{ title: "Add New Tasks"}}/>
-        <TeamTopTab.Screen name="TeamChat" component={TeamChat} options={{ title: "Chat Team" }} />
-      </TeamTopTab.Navigator>
-    </>
+    <DrawerContent>
+      <DrawerItem
+        label="Manage All Teams"
+        onPress={() => props.navigation.navigate("ManageTeam")}
+      />
+      <DrawerItem
+        label="Create New Team"
+        onPress={() => props.navigation.navigate("CreateTeam")}
+      />
+      <Divider style={styles.subDivider} />
+      <Text style={styles.teamName}>Software Engineer Team</Text>
+      <DrawerItemList {...props} />
+    </DrawerContent>
+  );
+}
+
+const TeamDrawerComponent: React.FC = () => {
+  return (
+    <TeamDrawer.Navigator
+      initialRouteName="TeamTask"
+      // screenOptions={{ headerShown: false }}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+    >
+      <TeamDrawer.Screen
+        name="TeamTask"
+        component={TeamTaskScreen}
+        options={{ title: "View Team Tasks" }}
+      />
+      <TeamDrawer.Screen
+        name="AddTeamTask"
+        component={AddTeamTask}
+        options={{ title: "Create Team Tasks" }}
+      />
+      <TeamDrawer.Screen
+        name="TeamChat"
+        component={TeamChat}
+        options={{ title: "Team Chat" }}
+      />
+      <TeamDrawer.Screen
+        name="TeamInfo"
+        component={TeamInfo}
+        options={{ title: "Your Team Information" }}
+      />
+    </TeamDrawer.Navigator>
   );
 };
 
@@ -34,17 +78,28 @@ const TeamFlow: React.FC = () => {
       screenOptions={{ headerShown: false }}
     >
       <TeamStack.Screen name="ManageTeam" component={ManageTeam} />
-      <TeamStack.Screen name="TeamTopTab" component={TeamTopComponent} />
+      <TeamStack.Screen name="CreateTeam" component={CreateTeam} />
+      <TeamStack.Screen
+        name="TeamBottomTab"
+        component={TeamDrawerComponent}
+        options={{ gestureEnabled: false }}
+      />
     </TeamStack.Navigator>
   );
 };
 
 const styles = StyleSheet.create({
-  header: {
-    paddingTop: 28,
-    backgroundColor: "white",
-  }
-})
-
+  teamName: {
+    paddingLeft: 10,
+    paddingVertical: 10,
+    fontSize: 16,
+    fontWeight: "bold",
+    // textDecorationLine: "underline",
+  },
+  subDivider: {
+    width: "85%",
+    alignSelf: "flex-end",
+  },
+});
 
 export default TeamFlow;

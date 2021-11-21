@@ -13,9 +13,9 @@ import {
 } from "react-native";
 
 import { SocialIcon, AirbnbRating, Card, Icon } from "react-native-elements";
-import {HomeStackList} from "../../HomeStackList";
+import {HomeScreensList} from "../../HomeScreensList";
 
-type InfoProps = StackScreenProps<HomeStackList, "Info">;
+type InfoProps = StackScreenProps<HomeScreensList, "Info">;
 
 const InfoScreen: React.FC<InfoProps> = () => {
   const [newPassword, setNewPassword] = useState("");
@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 30,
+    backgroundColor: "rgba(52, 52, 52, 0.4)",
   },
   helloTxt: {
     marginTop: 30,

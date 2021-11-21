@@ -2,22 +2,22 @@ import React from "react";
 import { StyleSheet } from "react-native";
 
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { HomeBottomList } from "./HomeBottomList";
+import { HomeScreensList } from "./HomeScreensList";
 
 import PersonalFlow from "./home-screens/personal-screen/PersonalFlow";
 import TeamFlow from "./home-screens/team-screen/TeamFlow";
 import InfoScreen from "./home-screens/info-screen/InfoScreen";
 
-const HomeMaterialBottom = createMaterialBottomTabNavigator<HomeBottomList>();
+const HomeBottomTab = createMaterialBottomTabNavigator<HomeScreensList>();
 
 const HomeScreen: React.FC = () => {
   return (
-    <HomeMaterialBottom.Navigator
+    <HomeBottomTab.Navigator
       initialRouteName="PersonalFlow"
       barStyle={styles.tabBar}
       shifting={true}
     >
-      <HomeMaterialBottom.Screen
+      <HomeBottomTab.Screen
         name="PersonalFlow"
         component={PersonalFlow}
         options={{
@@ -26,7 +26,7 @@ const HomeScreen: React.FC = () => {
           tabBarColor: "#C9E7F8",
         }}
       />
-      <HomeMaterialBottom.Screen
+      <HomeBottomTab.Screen
         name="TeamFlow"
         component={TeamFlow}
         options={{
@@ -35,16 +35,16 @@ const HomeScreen: React.FC = () => {
           tabBarColor: "#9FD5C9",
         }}
       />
-      <HomeMaterialBottom.Screen
+      <HomeBottomTab.Screen
         name="Info"
         component={InfoScreen}
         options={{
-          tabBarLabel: "Settings",
+          tabBarLabel: "Information",
           tabBarIcon: "image-album",
           tabBarColor: "#F7EAA2",
         }}
       />
-    </HomeMaterialBottom.Navigator>
+    </HomeBottomTab.Navigator>
   );
 };
 

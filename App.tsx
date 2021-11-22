@@ -1,14 +1,13 @@
-import React, { useState } from "react";
-import { ImageBackground, View } from "react-native";
+import React from "react";
+import { View } from "react-native";
 import { globalStyles } from "./constants/GlobalStyle";
 import { useFonts } from "expo-font";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AppLoading from "expo-app-loading";
 import MainScreen from "./screens/MainScreen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 
-const Stack = createNativeStackNavigator();
+import { Provider as AuthProvider } from "./context/AuthContext";
 
 export default function App() {
   const [loaded] = useFonts({
@@ -28,7 +27,9 @@ export default function App() {
           style={globalStyles.background}
         />
         <View style={globalStyles.container}>
-          <MainScreen />
+          <AuthProvider>
+            <MainScreen />
+          </AuthProvider>
         </View>
       </SafeAreaProvider>
     );

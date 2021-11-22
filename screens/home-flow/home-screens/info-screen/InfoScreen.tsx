@@ -1,5 +1,5 @@
-import {StackScreenProps} from "@react-navigation/stack";
-import React, { useState } from "react";
+import { StackScreenProps } from "@react-navigation/stack";
+import React, { useState, useContext } from "react";
 import {
   Text,
   View,
@@ -13,11 +13,14 @@ import {
 } from "react-native";
 
 import { SocialIcon, AirbnbRating, Card, Icon } from "react-native-elements";
-import {HomeScreensList} from "../../HomeScreensList";
+import { HomeScreensList } from "../../HomeScreensList";
+
+import { Context as AuthContext } from "../../../../context/AuthContext";
 
 type InfoProps = StackScreenProps<HomeScreensList, "Info">;
 
 const InfoScreen: React.FC<InfoProps> = () => {
+  const { state, signOut } = useContext(AuthContext);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -92,10 +95,7 @@ const InfoScreen: React.FC<InfoProps> = () => {
           </TouchableOpacity>
         </Card>
       </TouchableWithoutFeedback>
-      <TouchableOpacity
-        style={styles.btn}
-        onPress={() => console.log("Log out")}
-      >
+      <TouchableOpacity style={styles.btn} onPress={() => signOut()}>
         <Text style={styles.btnTxt}>Log out</Text>
       </TouchableOpacity>
       <AirbnbRating />

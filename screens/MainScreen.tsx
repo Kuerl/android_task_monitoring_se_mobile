@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 
 import WelcomeScreen from "./login-screen/WelcomeScreen";
 import SplashScreen from "./splash/SplashScreen";
 import HomeScreen from "./home-flow/HomeScreen";
+
+import { Context as AuthContext } from "../context/AuthContext";
 
 const globalTheme = {
   ...DefaultTheme,
@@ -16,9 +18,10 @@ const globalTheme = {
 
 export default function MainScreen() {
   const [baseState, setBaseState] = useState({
-    authentication: false,
     unsplash: false,
   });
+
+  const { state } = useContext(AuthContext);
 
   useEffect(() => {
     setTimeout(() => {
@@ -33,17 +36,17 @@ export default function MainScreen() {
   }, [baseState]);
   return (
     <NavigationContainer theme={globalTheme}>
-      {baseState.unsplash === true && baseState.authentication == false ? (
+      {baseState.unsplash === true && state.authentication == false ? (
         <WelcomeScreen
-          baseState={baseState}
-          setAuth={(e: boolean) =>
-            setBaseState((prevState) => ({
-              ...prevState,
-              authentication: e,
-            }))
-          }
+          // baseState={baseState}
+          // setAuth={(e: boolean) =>
+          //   setBaseState((prevState) => ({
+          //     ...prevState,
+          //     authentication: e,
+          //   }))
+          // }
         />
-      ) : baseState.unsplash === true && baseState.authentication === true ? (
+      ) : baseState.unsplash === true && state.authentication === true ? (
         <HomeScreen />
       ) : (
         <SplashScreen />

@@ -2,7 +2,7 @@ import createDataContext from "../utils/CreateDataContext";
 import axios from "../utils/AxiosBase";
 import { Dispatch } from "react";
 
-type AuthStateType = {
+export type AuthStateType = {
   authentication: boolean;
   errorMessage: { effect: boolean; status: string };
   pkAccount_Id: string;
@@ -30,7 +30,7 @@ type AuthActionType =
   | { type: "add_err"; payload: { status: string } }
   | { type: "clear_err_msg" };
 
-type SignInProps = {
+export type SignInProps = {
   username: string;
   password: string;
 };
@@ -80,13 +80,18 @@ const clearErrorMessage = (dispatch: Dispatch<AuthActionType>) => () => {
   dispatch({ type: "clear_err_msg" });
 };
 
+// if valid: sign in, then get all user information - else: err msg
 const signIn = (dispatch: Dispatch<AuthActionType>) => {
   return async ({ username, password }: SignInProps) => {
     try {
       const res = await axios.post("/login", { username, password });
-      res.data.effect
-        ? dispatch({ type: "sign_in" })
-        : dispatch({ type: "add_err", payload: { status: res.data.status } });
+      if (res.data.effect) {
+        dispatch({ type: "sign_in" });
+        const userInfo = await axios.get("/user/" + username);
+        dispatch({ type: "get_infor", payload: userInfo.data });
+      } else {
+        dispatch({ type: "add_err", payload: { status: res.data.status } });
+      }
     } catch (err) {
       console.log(err);
     }

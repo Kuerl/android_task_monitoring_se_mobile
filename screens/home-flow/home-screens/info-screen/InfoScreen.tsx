@@ -15,18 +15,22 @@ import {
 import { SocialIcon, AirbnbRating, Card, Icon } from "react-native-elements";
 import { HomeScreensList } from "../../HomeScreensList";
 
-import { Context as AuthContext } from "../../../../context/AuthContext";
+import { Context as AuthContext, AuthStateType } from "../../../../context/AuthContext";
 
 type InfoProps = StackScreenProps<HomeScreensList, "Info">;
+type ContextType = {
+  state: AuthStateType;
+  signOut: () => void;
+}
 
 const InfoScreen: React.FC<InfoProps> = () => {
-  const { state, signOut } = useContext(AuthContext);
+  const { state, signOut }: ContextType = useContext(AuthContext);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.helloTxt}>Hello, Anh Viet Vo</Text>
+      <Text style={styles.helloTxt}>Hello, {state.firstName} {state.lastName}</Text>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Card>
           <Icon
@@ -38,20 +42,20 @@ const InfoScreen: React.FC<InfoProps> = () => {
           />
           <Card.Divider />
           <View style={styles.txtContainer}>
+            <Text style={styles.txt}>Username</Text>
+            <Text style={styles.txtDetails}>{ state.username }</Text>
+          </View>
+          <View style={styles.txtContainer}>
             <Text style={styles.txt}>First name</Text>
-            <Text style={styles.txtDetails}>Anh Viet</Text>
+            <Text style={styles.txtDetails}>{ state.firstName }</Text>
           </View>
           <View style={styles.txtContainer}>
             <Text style={styles.txt}>Last name</Text>
-            <Text style={styles.txtDetails}>Vo</Text>
+            <Text style={styles.txtDetails}>{ state.lastName }</Text>
           </View>
           <View style={styles.txtContainer}>
-            <Text style={styles.txt}>Username</Text>
-            <Text style={styles.txtDetails}>anhvietvo</Text>
-          </View>
-          <View style={styles.txtContainer}>
-            <Text style={styles.txt}>Phone</Text>
-            <Text style={styles.txtDetails}>123456789</Text>
+            <Text style={styles.txt}>Description</Text>
+            <Text style={styles.txtDetails}>{ state.description }</Text>
           </View>
           <View style={styles.txtContainer}>
             <Text style={[styles.txt, { paddingRight: 28 }]}>New password</Text>

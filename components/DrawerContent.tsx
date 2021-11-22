@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 
 import { DrawerContentScrollView } from "@react-navigation/drawer";
 import { Divider } from "react-native-elements";
+import { Context as AuthContext, AuthStateType } from "../context/AuthContext";
 
 const DrawerContent: React.FC = (props: any) => {
+  const { state }: { state: AuthStateType } = useContext(AuthContext);
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -18,7 +21,7 @@ const DrawerContent: React.FC = (props: any) => {
         <Divider />
       </View>
       <DrawerContentScrollView style={styles.contentContainer} {...props}>
-        <Text style={styles.drawerTxt}>Hello, Anh Viet</Text>
+        <Text style={styles.drawerTxt}>Hello, {state.firstName}</Text>
         {props.children}
       </DrawerContentScrollView>
       <View>

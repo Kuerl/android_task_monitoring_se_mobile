@@ -1,27 +1,35 @@
-import axios from "axios";
 import React, { useState, useContext } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import * as Animatable from "react-native-animatable";
 import __logo from "../../assets/images/atm_logo_mini.png";
 import InputComponent from "../../components/InputComponent";
-import { signform, svurl } from "../../constants/Constant";
+import { signform } from "../../constants/Constant";
 import { loginStyles } from "./styles/LoginStyle";
 
-import { Context as AuthContext } from "../../context/AuthContext";
+import {
+  Context as AuthContext,
+  AuthStateType,
+  SignInProps
+} from "../../context/AuthContext";
+
+type ContextType = {
+  state: AuthStateType;
+  signIn: (signin: SignInProps) => void;
+};
 
 export default function LoginScreen({
   form,
   setForm,
   after,
-  // setAuth,
-}: {
+}: // setAuth,
+{
   form: any;
   setForm: Function;
   after: boolean;
   // setAuth: Function;
 }) {
-  const { state, signIn } = useContext(AuthContext);
-  
+  const { state, signIn }: ContextType = useContext(AuthContext);
+
   const rotate = { back: false };
   const [signin, setSignIn] = useState({
     username: "",
@@ -112,7 +120,9 @@ export default function LoginScreen({
             display.edited === true ? (
             <Text style={loginStyles.none__check}>Notvalid input username</Text>
           ) : state.errorMessage.effect === true ? (
-            <Text style={loginStyles.none__check}>{state.errorMessage.status}</Text>
+            <Text style={loginStyles.none__check}>
+              {state.errorMessage.status}
+            </Text>
           ) : (
             <></>
           )}

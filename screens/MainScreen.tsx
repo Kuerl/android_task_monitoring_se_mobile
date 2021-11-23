@@ -6,7 +6,8 @@ import WelcomeScreen from "./login-screen/WelcomeScreen";
 import SplashScreen from "./splash/SplashScreen";
 import HomeScreen from "./home-flow/HomeScreen";
 
-import { AuthStateType, Context as AuthContext } from "../context/AuthContext";
+import { Context as AuthContext } from "../context/AuthContext";
+import { AuthContextType } from "../context/ContextTypes";
 import { navigationRef } from "../utils/NavigationRef";
 
 const globalTheme = {
@@ -22,7 +23,7 @@ export default function MainScreen() {
     unsplash: false,
   });
 
-  const { state }: { state: AuthStateType } = useContext(AuthContext);
+  const { state }: AuthContextType = useContext(AuthContext);
 
   useEffect(() => {
     setTimeout(() => {

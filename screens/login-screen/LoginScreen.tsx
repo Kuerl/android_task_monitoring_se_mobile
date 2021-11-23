@@ -6,16 +6,8 @@ import InputComponent from "../../components/InputComponent";
 import { signform } from "../../constants/Constant";
 import { loginStyles } from "./styles/LoginStyle";
 
-import {
-  Context as AuthContext,
-  AuthStateType,
-  SignInProps
-} from "../../context/AuthContext";
-
-type ContextType = {
-  state: AuthStateType;
-  signIn: (signin: SignInProps) => void;
-};
+import { Context as AuthContext } from "../../context/AuthContext";
+import { AuthContextType } from "../../context/ContextTypes";
 
 export default function LoginScreen({
   form,
@@ -28,7 +20,7 @@ export default function LoginScreen({
   after: boolean;
   // setAuth: Function;
 }) {
-  const { state, signIn }: ContextType = useContext(AuthContext);
+  const { state, signIn }: AuthContextType = useContext(AuthContext);
 
   const rotate = { back: false };
   const [signin, setSignIn] = useState({
@@ -118,7 +110,7 @@ export default function LoginScreen({
             </Text>
           ) : (signin.username.length < 6 || signin.username.length > 20) &&
             display.edited === true ? (
-            <Text style={loginStyles.none__check}>Notvalid input username</Text>
+            <Text style={loginStyles.none__check}>Not valid input username</Text>
           ) : state.errorMessage.effect === true ? (
             <Text style={loginStyles.none__check}>
               {state.errorMessage.status}

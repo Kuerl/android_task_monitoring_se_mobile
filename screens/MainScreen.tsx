@@ -7,6 +7,7 @@ import SplashScreen from "./splash/SplashScreen";
 import HomeScreen from "./home-flow/HomeScreen";
 
 import { AuthStateType, Context as AuthContext } from "../context/AuthContext";
+import { navigationRef } from "../utils/NavigationRef";
 
 const globalTheme = {
   ...DefaultTheme,
@@ -35,7 +36,7 @@ export default function MainScreen() {
     };
   }, [baseState]);
   return (
-    <NavigationContainer theme={globalTheme}>
+    <NavigationContainer ref={navigationRef} theme={globalTheme}>
       {baseState.unsplash === true && state.authentication == false ? (
         <WelcomeScreen
         // baseState={baseState}

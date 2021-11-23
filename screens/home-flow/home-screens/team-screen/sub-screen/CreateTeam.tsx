@@ -1,10 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Input, Button } from "react-native-elements";
+
+import { Context as AuthContext } from "../../../../../context/AuthContext";
+import { Context as TeamContext } from "../../../../../context/TeamContext";
+import {
+  AuthContextType,
+  TeamContextType,
+} from "../../../../../context/ContextTypes";
 
 const CreateTeam = () => {
   const [name, setName] = useState("");
   const [details, setDetails] = useState("");
+
+  const { createNewTeam }: TeamContextType = useContext(TeamContext);
+  const { state }: AuthContextType = useContext(AuthContext);
 
   return (
     <View style={styles.container}>
@@ -27,7 +37,12 @@ const CreateTeam = () => {
         value={details}
         onChangeText={setDetails}
       />
-      <Button title="Create" onPress={() => console.log("CREATED TEAM")} />
+      <Button
+        title="Create"
+        onPress={() =>
+          createNewTeam({ teamName: name, username: state.username })
+        }
+      />
     </View>
   );
 };

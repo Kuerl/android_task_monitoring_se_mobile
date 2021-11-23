@@ -19,6 +19,8 @@ import {
   DrawerItemList,
 } from "@react-navigation/drawer";
 
+import { Provider as TeamProvider } from "../../../../context/TeamContext";
+
 const TeamStack = createStackNavigator<TeamStackList>();
 const TeamDrawer = createDrawerNavigator<TeamTabList>();
 
@@ -73,18 +75,20 @@ const TeamDrawerComponent: React.FC = () => {
 
 const TeamFlow: React.FC = () => {
   return (
-    <TeamStack.Navigator
-      initialRouteName="ManageTeam"
-      screenOptions={{ headerShown: false }}
-    >
-      <TeamStack.Screen name="ManageTeam" component={ManageTeam} />
-      <TeamStack.Screen name="CreateTeam" component={CreateTeam} />
-      <TeamStack.Screen
-        name="TeamBottomTab"
-        component={TeamDrawerComponent}
-        options={{ gestureEnabled: false }}
-      />
-    </TeamStack.Navigator>
+    <TeamProvider>
+      <TeamStack.Navigator
+        initialRouteName="ManageTeam"
+        screenOptions={{ headerShown: false }}
+      >
+        <TeamStack.Screen name="ManageTeam" component={ManageTeam} />
+        <TeamStack.Screen name="CreateTeam" component={CreateTeam} />
+        <TeamStack.Screen
+          name="TeamBottomTab"
+          component={TeamDrawerComponent}
+          options={{ gestureEnabled: false }}
+        />
+      </TeamStack.Navigator>
+    </TeamProvider>
   );
 };
 

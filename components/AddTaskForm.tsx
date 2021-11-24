@@ -1,8 +1,12 @@
-import React, { useReducer, useState } from "react";
+import React, { useReducer, useState, useContext } from "react";
 import { Text, StyleSheet } from "react-native";
 
 import { Input, Button } from "react-native-elements";
+import { NewPersonalTaskType } from "../context/PersonalContext";
 import DateTimePicker from "./DateTimePicker";
+
+import { Context as AuthContext } from "../context/AuthContext";
+import { AuthContextType } from "../context/ContextTypes";
 
 export type SwitchState = {
   startTimeSwitch: boolean;
@@ -14,6 +18,11 @@ export type SwitchState = {
 export type SwitchAction = {
   type: "SWITCH_DATE" | "SWITCH_TIME";
   payload: "START" | "FINISH";
+};
+
+type AddTaskFormProps = {
+  type: "Personal";
+  createNewTask: (props: NewPersonalTaskType) => void;
 };
 
 // Reducer handle the switch button for date and time
@@ -50,14 +59,14 @@ const reducer = (state: SwitchState, action: SwitchAction) => {
 
 // AddTaskForm will be used for both Personal and Team
 // so addTask must be assigned for suitable action
-const AddTaskForm: React.FC = () => {
+const AddTaskForm: React.FC<AddTaskFormProps> = ({ type, createNewTask }) => {
   // Context for action submit form
-  //const { state } = useContext(AuthContext);
+  const { state }: AuthContextType = useContext(AuthContext);
   //checkStatus.filter(task => console.log(task))
 
   // State handle form value
   const [title, setTitle] = useState("");
-  const [details, setDetails] = useState("");
+  const [content, setContent] = useState("");
   const [startDate, setStartDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [finishDate, setFinishDate] = useState("");
@@ -84,13 +93,13 @@ const AddTaskForm: React.FC = () => {
         onChangeText={setTitle}
       />
       <Input
-        placeholder="Describe task details (optional)"
+        placeholder="Describe task content (optional)"
         leftIcon={{ type: "feather", name: "info", color: "white" }}
         style={styles.input}
-        label="Details"
+        label="Content"
         labelStyle={styles.label}
-        value={details}
-        onChangeText={setDetails}
+        value={content}
+        onChangeText={setContent}
       />
       <DateTimePicker
         name="START"
@@ -123,7 +132,16 @@ const AddTaskForm: React.FC = () => {
       <Button
         title="Add Task"
         onPress={() => {
-          console.log("Add Task");
+          createNewTask({
+            username: state.username,
+            taskData: {
+              title,
+              content,
+              taskType: type,
+              start: startDate + " " + startTime,
+              due: finishDate + " " + finishTime,
+            },
+          });
         }}
       />
     </>

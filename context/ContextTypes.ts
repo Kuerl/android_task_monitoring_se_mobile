@@ -1,5 +1,5 @@
 import { AuthStateType, SignInProps } from "./AuthContext";
-import { NewPersonalTaskType, PersonalStateType } from "./PersonalContext";
+import { LoadPersonalTaskType, NewPersonalTaskType, PersonalStateType } from "./PersonalContext";
 import { CreateTeamProps, LoadTeamProps, TeamStateType } from "./TeamContext";
 
 export type AuthContextType = {
@@ -18,4 +18,5 @@ export type TeamContextType = {
 export type PersonalContextType = {
   state: PersonalStateType;
   createNewTask: (props: NewPersonalTaskType) => void;
+  loadTask: (props: LoadPersonalTaskType) => void;
 };

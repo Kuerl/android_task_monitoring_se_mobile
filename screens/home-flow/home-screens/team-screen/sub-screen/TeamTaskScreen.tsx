@@ -3,7 +3,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { FAB } from "react-native-elements";
 
-import CalendarBar from "../../../../../components/CalendarBar";
+// import CalendarBar from "../../../../../components/CalendarBar";
 import TaskTimeline from "../../../../../components/TaskTimeline";
 import { TeamTabList } from "../TeamFlowList";
 
@@ -13,10 +13,10 @@ const TeamTaskScreen: React.FC<TeamDrawerProps> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header} />
-      <CalendarBar>
+      {/* <CalendarBar> */}
         {/* <Text style={styles.emptyItemText}>Team Task Here</Text> */}
-        <TaskTimeline />
-      </CalendarBar>
+        {/* <TaskTimeline /> */}
+      {/* </CalendarBar> */}
       <FAB
         color="#439DE4"
         icon={{ type: "feather", name: "plus", color: "white" }}

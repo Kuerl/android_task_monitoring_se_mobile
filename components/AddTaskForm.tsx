@@ -137,7 +137,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ type, createNewTask }) => {
             taskData: {
               title,
               content,
-              taskType: type,
+              // taskType: type,
               start: startDate + " " + startTime,
               due: finishDate + " " + finishTime,
             },

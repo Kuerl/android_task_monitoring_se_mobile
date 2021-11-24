@@ -86,9 +86,9 @@ const signIn = (dispatch: Dispatch<AuthActionType>) => {
     try {
       const res = await axios.post("/login", { username, password });
       if (res.data.effect) {
-        dispatch({ type: "sign_in" });
         const userInfo = await axios.get("/user/" + username);
         dispatch({ type: "get_infor", payload: userInfo.data });
+        dispatch({ type: "sign_in" });
       } else {
         dispatch({ type: "add_err", payload: { status: res.data.status } });
       }

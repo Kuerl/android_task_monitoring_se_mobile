@@ -4,6 +4,7 @@ import { Dispatch } from "react";
 import * as RootNavigation from "../utils/NavigationRef";
 
 type PersonalTaskType = {
+  pkTask_Id: number;
   title: string;
   content: string;
   start: string;
@@ -52,6 +53,7 @@ const personalReducer = (
         tasks: [
           ...state.tasks,
           {
+            pkTask_Id: action.payload.pkTask_Id,
             title: action.payload.title,
             content: action.payload.content,
             start: action.payload.start,
@@ -89,7 +91,7 @@ const createNewTask = (dispatch: Dispatch<PersonalActionType>) => {
       if (res.data.effect) {
         dispatch({
           type: "add_task",
-          payload: taskData,
+          payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
         });
         RootNavigation.navigate("PersonalTask");
       } else {
@@ -111,6 +113,7 @@ const loadTask = (dispatch: Dispatch<PersonalActionType>) => {
       // Format the response data to local state
       const taskData: PersonalTaskType[] = res.data.map((task: any) => {
         return {
+          pkTask_Id: task.pkTask_Id,
           title: task.title,
           content: task.content,
           start: task.start.slice(0, 19).replace("T", " "),

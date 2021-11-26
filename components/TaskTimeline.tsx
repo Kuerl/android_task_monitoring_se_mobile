@@ -8,7 +8,8 @@ import {
   Timeline,
 } from "react-native-calendars";
 
-type EventType = {
+export type EventType = {
+  pkTask_Id: number;
   start: string;
   end: string;
   title: string;
@@ -28,6 +29,7 @@ const wait = (timeout: number) => {
 const TaskTimeline: React.FC<TimelineProps> = ({ events, refresh }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
+
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);

@@ -12,6 +12,8 @@ import { AuthContextType } from "../../../../../context/ContextTypes";
 import { Context as PersonalContext } from "../../../../../context/PersonalContext";
 import { PersonalContextType } from "../../../../../context/ContextTypes";
 
+import { splitTask } from "../../../../../utils/SplitTask";
+
 type PersonalDrawerProps = DrawerScreenProps<PersonalTabList, "PersonalTask">;
 
 const PersonalTaskScreen: React.FC<PersonalDrawerProps> = ({ navigation }) => {
@@ -22,20 +24,11 @@ const PersonalTaskScreen: React.FC<PersonalDrawerProps> = ({ navigation }) => {
     loadTask({ username: authContext.state.username });
   }, []);
 
-  const events = state.tasks.map((task) => {
-    return {
-      start: task.start,
-      end: task.due,
-      title: task.title,
-      summary: task.content,
-    };
-  });
-
   return (
     <View style={styles.container}>
       <View style={styles.header} />
       <TaskTimeline
-        events={events}
+        events={splitTask(state.tasks)}
         refresh={() => loadTask({ username: authContext.state.username })}
       />
       <FAB

@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { StyleSheet, ScrollView } from "react-native";
 import AddTaskForm from "../../../../../components/AddTaskForm";
 
-import {PersonalContextType} from "../../../../../context/ContextTypes";
+import { PersonalContextType } from "../../../../../context/ContextTypes";
 import { Context as PersonalContext } from "../../../../../context/PersonalContext";
 
 const AddPersonalTask: React.FC = () => {
@@ -10,7 +10,7 @@ const AddPersonalTask: React.FC = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <AddTaskForm type="Personal" createNewTask={createNewTask} />
+      <AddTaskForm type="Personal" createNewTask={createNewTask} pkTeam_Id="" />
     </ScrollView>
   );
 };

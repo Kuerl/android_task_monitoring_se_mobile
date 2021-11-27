@@ -1,6 +1,20 @@
 import { AuthStateType, SignInProps } from "./AuthContext";
-import { LoadPersonalTaskType, NewPersonalTaskType, PersonalStateType } from "./PersonalContext";
-import { CreateTeamProps, LoadTeamProps, TeamStateType } from "./TeamContext";
+import {
+  LoadPersonalTaskType,
+  NewPersonalTaskType,
+  PersonalStateType,
+} from "./PersonalContext";
+import {
+  CreateTeamProps,
+  LoadTeamMemberProps,
+  LoadTeamProps,
+  TeamStateType,
+} from "./TeamContext";
+import {
+  LoadTeamTaskType,
+  NewTeamTaskType,
+  TeamTaskStateType,
+} from "./TeamTaskContext";
 
 export type AuthContextType = {
   state: AuthStateType;
@@ -13,10 +27,17 @@ export type TeamContextType = {
   state: TeamStateType;
   createNewTeam: (props: CreateTeamProps) => void;
   loadAllTeam: (props: LoadTeamProps) => void;
+  loadTeamMembers: (props: LoadTeamMemberProps) => void;
 };
 
 export type PersonalContextType = {
   state: PersonalStateType;
   createNewTask: (props: NewPersonalTaskType) => void;
   loadTask: (props: LoadPersonalTaskType) => void;
+};
+
+export type TeamTaskContextType = {
+  state: TeamTaskStateType;
+  createNewTask: (props: NewTeamTaskType) => void;
+  loadTask: (props: LoadTeamTaskType) => void;
 };

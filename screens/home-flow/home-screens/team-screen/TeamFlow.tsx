@@ -12,7 +12,10 @@ import TeamInfo from "./sub-screen/TeamInfo";
 import CreateTeam from "./sub-screen/CreateTeam";
 import DrawerContent from "../../../../components/DrawerContent";
 
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  StackScreenProps,
+} from "@react-navigation/stack";
 import {
   createDrawerNavigator,
   DrawerItem,
@@ -20,6 +23,7 @@ import {
 } from "@react-navigation/drawer";
 
 import { Provider as TeamProvider } from "../../../../context/TeamContext";
+import { Provider as TeamTaskProvider } from "../../../../context/TeamTaskContext";
 
 const TeamStack = createStackNavigator<TeamStackList>();
 const TeamDrawer = createDrawerNavigator<TeamTabList>();
@@ -42,7 +46,8 @@ function CustomDrawerContent(props: any) {
   );
 }
 
-const TeamDrawerComponent: React.FC = () => {
+type TeamStackProps = StackScreenProps<TeamStackList, "TeamBottomTab">;
+const TeamDrawerComponent: React.FC<TeamStackProps> = ({ route }) => {
   return (
     <TeamDrawer.Navigator
       initialRouteName="TeamTask"
@@ -53,11 +58,13 @@ const TeamDrawerComponent: React.FC = () => {
         name="TeamTask"
         component={TeamTaskScreen}
         options={{ title: "View Team Tasks" }}
+        initialParams={route.params}
       />
       <TeamDrawer.Screen
         name="AddTeamTask"
         component={AddTeamTask}
         options={{ title: "Create Team Tasks" }}
+        initialParams={route.params}
       />
       <TeamDrawer.Screen
         name="TeamChat"
@@ -76,18 +83,20 @@ const TeamDrawerComponent: React.FC = () => {
 const TeamFlow: React.FC = () => {
   return (
     <TeamProvider>
-      <TeamStack.Navigator
-        initialRouteName="ManageTeam"
-        screenOptions={{ headerShown: false }}
-      >
-        <TeamStack.Screen name="ManageTeam" component={ManageTeam} />
-        <TeamStack.Screen name="CreateTeam" component={CreateTeam} />
-        <TeamStack.Screen
-          name="TeamBottomTab"
-          component={TeamDrawerComponent}
-          options={{ gestureEnabled: false }}
-        />
-      </TeamStack.Navigator>
+      <TeamTaskProvider>
+        <TeamStack.Navigator
+          initialRouteName="ManageTeam"
+          screenOptions={{ headerShown: false }}
+        >
+          <TeamStack.Screen name="ManageTeam" component={ManageTeam} />
+          <TeamStack.Screen name="CreateTeam" component={CreateTeam} />
+          <TeamStack.Screen
+            name="TeamBottomTab"
+            component={TeamDrawerComponent}
+            options={{ gestureEnabled: false }}
+          />
+        </TeamStack.Navigator>
+      </TeamTaskProvider>
     </TeamProvider>
   );
 };

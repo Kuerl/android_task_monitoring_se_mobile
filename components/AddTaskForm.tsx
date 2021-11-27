@@ -1,12 +1,14 @@
-import React, { useReducer, useState, useContext } from "react";
-import { Text, StyleSheet } from "react-native";
+import React, { useReducer, useState, useContext, useEffect } from "react";
+import { Text, StyleSheet, View } from "react-native";
 
-import { Input, Button } from "react-native-elements";
+import { Input, Button, CheckBox } from "react-native-elements";
 import { NewPersonalTaskType } from "../context/PersonalContext";
 import DateTimePicker from "./DateTimePicker";
 
 import { Context as AuthContext } from "../context/AuthContext";
-import { AuthContextType } from "../context/ContextTypes";
+import { Context as TeamContext } from "../context/TeamContext";
+import { AuthContextType, TeamContextType } from "../context/ContextTypes";
+import { NewTeamTaskType } from "../context/TeamTaskContext";
 
 export type SwitchState = {
   startTimeSwitch: boolean;
@@ -21,8 +23,11 @@ export type SwitchAction = {
 };
 
 type AddTaskFormProps = {
-  type: "Personal";
-  createNewTask: (props: NewPersonalTaskType) => void;
+  type: "Personal" | "Team";
+  createNewTask:
+    | ((props: NewPersonalTaskType) => void)
+    | ((props: NewTeamTaskType) => void);
+  pkTeam_Id: string;
 };
 
 // Reducer handle the switch button for date and time
@@ -59,10 +64,18 @@ const reducer = (state: SwitchState, action: SwitchAction) => {
 
 // AddTaskForm will be used for both Personal and Team
 // so addTask must be assigned for suitable action
-const AddTaskForm: React.FC<AddTaskFormProps> = ({ type, createNewTask }) => {
+const AddTaskForm: React.FC<AddTaskFormProps> = ({
+  type,
+  createNewTask,
+  pkTeam_Id,
+}) => {
   // Context for action submit form
   const { state }: AuthContextType = useContext(AuthContext);
-  //checkStatus.filter(task => console.log(task))
+  const teamState: TeamContextType = useContext(TeamContext);
+
+  const teamMembers = teamState.state.team.filter(
+    (team) => team.pkTeam_Id === pkTeam_Id
+  )[0].members;
 
   // State handle form value
   const [title, setTitle] = useState("");
@@ -101,6 +114,23 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ type, createNewTask }) => {
         value={content}
         onChangeText={setContent}
       />
+      {type === "Team" ? (
+        <View style={styles.allocationContainer}>
+          <Text style={styles.allocationLabel}>Allocated To:</Text>
+          {teamMembers.map((member) => {
+            return (
+              <CheckBox
+                key={member.user.username}
+                title={member.user.username}
+                checkedIcon="dot-circle-o"
+                uncheckedIcon="circle-o"
+                // checked={user.check}
+                // onPress={() => setCheck(user.username)}
+              />
+            );
+          })}
+        </View>
+      ) : null}
       <DateTimePicker
         name="START"
         value={{
@@ -131,18 +161,18 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ type, createNewTask }) => {
       />
       <Button
         title="Add Task"
-        onPress={() => {
+        onPress={() =>
           createNewTask({
             username: state.username,
+            pkTeam_Id: pkTeam_Id,
             taskData: {
               title,
               content,
-              // taskType: type,
               start: startDate + " " + startTime,
               due: finishDate + " " + finishTime,
             },
-          });
-        }}
+          })
+        }
       />
     </>
   );
@@ -162,6 +192,15 @@ const styles = StyleSheet.create({
   input: {
     color: "white",
     paddingLeft: 8,
+  },
+  allocationContainer: {
+    top: -5,
+    marginBottom: 10,
+  },
+  allocationLabel: {
+    color: "white",
+    fontSize: 20,
+    paddingLeft: 15,
   },
 });
 

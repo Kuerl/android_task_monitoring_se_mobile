@@ -3,9 +3,21 @@ import axios from "../utils/AxiosBase";
 import { Dispatch } from "react";
 import * as RootNavigation from "../utils/NavigationRef";
 
-type TeamType = {
+type Member = {
+  memberRole: "Admin" | "Member";
+  user: {
+    username: string;
+    firstName: string;
+    lastName: string;
+    description: string;
+    active: boolean;
+  };
+};
+
+export type TeamType = {
   pkTeam_Id: string;
   teamName: string;
+  members: Member[];
 };
 
 export type TeamStateType = {
@@ -16,6 +28,7 @@ export type TeamStateType = {
 type TeamActionType =
   | { type: "add_team"; payload: TeamType }
   | { type: "clear_team" }
+  | { type: "get_members"; payload: { pkTeam_Id: string; members: Member[] } }
   | { type: "add_err"; payload: { errorMessage: string } };
 
 export type CreateTeamProps = {
@@ -27,6 +40,10 @@ export type LoadTeamProps = {
   username: string;
 };
 
+export type LoadTeamMemberProps = {
+  pkTeam_Id: string;
+};
+
 const teamReducer = (state: TeamStateType, action: TeamActionType) => {
   switch (action.type) {
     case "add_team":
@@ -36,6 +53,7 @@ const teamReducer = (state: TeamStateType, action: TeamActionType) => {
           {
             pkTeam_Id: action.payload.pkTeam_Id,
             teamName: action.payload.teamName,
+            members: action.payload.members,
           },
         ],
         errorMessage: "",
@@ -44,6 +62,16 @@ const teamReducer = (state: TeamStateType, action: TeamActionType) => {
       return {
         ...state,
         team: [],
+      };
+    case "get_members":
+      return {
+        ...state,
+        team: state.team.map((teamValue) => {
+          if (teamValue.pkTeam_Id == action.payload.pkTeam_Id) {
+            teamValue.members = action.payload.members;
+          }
+          return teamValue;
+        }),
       };
     case "add_err":
       return {
@@ -65,6 +93,7 @@ const createNewTeam = (dispatch: Dispatch<TeamActionType>) => {
           payload: {
             teamName: res.data.teamName,
             pkTeam_Id: res.data.pkTeam_Id,
+            members: [],
           },
         });
         RootNavigation.navigate("ManageTeam");
@@ -101,6 +130,7 @@ const loadAllTeam = (dispatch: Dispatch<TeamActionType>) => {
               payload: {
                 pkTeam_Id: resData.team.pkTeam_Id,
                 teamName: resData.team.teamName,
+                members: [],
               },
             })
           )
@@ -111,8 +141,22 @@ const loadAllTeam = (dispatch: Dispatch<TeamActionType>) => {
   };
 };
 
+const loadTeamMembers = (dispatch: Dispatch<TeamActionType>) => {
+  return async ({ pkTeam_Id }: LoadTeamMemberProps) => {
+    try {
+      const res = await axios.get("/team/" + pkTeam_Id);
+      dispatch({
+        type: "get_members",
+        payload: { pkTeam_Id: pkTeam_Id, members: res.data.members },
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
+
 export const { Provider, Context } = createDataContext(
   teamReducer,
-  { createNewTeam, loadAllTeam },
+  { createNewTeam, loadAllTeam, loadTeamMembers },
   { team: [], errorMessage: "" }
 );

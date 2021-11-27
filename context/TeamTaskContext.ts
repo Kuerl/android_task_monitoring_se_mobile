@@ -5,21 +5,13 @@ import * as RootNavigation from "../utils/NavigationRef";
 
 import { TaskType } from "../constants/TaskType";
 
-// type PersonalTaskType = {
-//   pkTask_Id: number;
-//   title: string;
-//   content: string;
-//   start: string;
-//   due: string;
-// };
-
 // Declare State and Action type
-export type PersonalStateType = {
+export type TeamTaskStateType = {
   tasks: TaskType[];
   errorMessage: string;
 };
 
-export type PersonalActionType =
+export type TeamTaskActionType =
   | { type: "clear_task" }
   | {
       type: "add_task";
@@ -30,20 +22,19 @@ export type PersonalActionType =
   | { type: "clear_err" };
 
 // Declare type PROPS for createNewTask function
-export type NewPersonalTaskType = {
-  username: string;
+export type NewTeamTaskType = {
+  // username: string;
+  pkTeam_Id: string;
   taskData: TaskType;
 };
 
 // Declare type PROPS for loadTask function
-export type LoadPersonalTaskType = {
-  username: string;
+export type LoadTeamTaskType = {
+  // username: string;
+  pkTeam_Id: string;
 };
 
-const personalReducer = (
-  state: PersonalStateType,
-  action: PersonalActionType
-) => {
+const teamReducer = (state: TeamTaskStateType, action: TeamTaskActionType) => {
   switch (action.type) {
     case "clear_task":
       return {
@@ -60,6 +51,7 @@ const personalReducer = (
             content: action.payload.content,
             start: action.payload.start,
             due: action.payload.due,
+            user: action.payload.user,
           },
         ],
       };
@@ -83,23 +75,24 @@ const personalReducer = (
   }
 };
 
-const createNewTask = (dispatch: Dispatch<PersonalActionType>) => {
-  return async ({ username, taskData }: NewPersonalTaskType) => {
+const createNewTask = (dispatch: Dispatch<TeamTaskActionType>) => {
+  return async ({ pkTeam_Id, taskData }: NewTeamTaskType) => {
     try {
-      const res = await axios.post("/task/personal/" + username, {
+      const res = await axios.post("/task/team/" + pkTeam_Id, {
         ...taskData,
-        taskType: "Personal",
+        taskType: "Team",
+        user: "anhviet",
       });
       if (res.data.effect) {
         dispatch({
           type: "add_task",
           payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
         });
-        RootNavigation.navigate("PersonalTask");
+        RootNavigation.navigate("TeamTask");
       } else {
         dispatch({
           type: "add_err",
-          payload: { errorMessage: "Create new personal task failed" },
+          payload: { errorMessage: "Create new team task failed" },
         });
       }
     } catch (err) {
@@ -108,10 +101,10 @@ const createNewTask = (dispatch: Dispatch<PersonalActionType>) => {
   };
 };
 
-const loadTask = (dispatch: Dispatch<PersonalActionType>) => {
-  return async ({ username }: LoadPersonalTaskType) => {
+const loadTask = (dispatch: Dispatch<TeamTaskActionType>) => {
+  return async ({ pkTeam_Id }: LoadTeamTaskType) => {
     try {
-      const res = await axios.get("/task/personal/" + username);
+      const res = await axios.get("/task/team/" + pkTeam_Id);
       // Format the response data to local state
       const taskData: TaskType[] = res.data.map((task: any) => {
         return {
@@ -120,6 +113,7 @@ const loadTask = (dispatch: Dispatch<PersonalActionType>) => {
           content: task.content,
           start: task.start.slice(0, 19).replace("T", " "),
           due: task.due.slice(0, 19).replace("T", " "),
+          user: task.user,
         };
       });
       dispatch({ type: "load_task", payload: taskData });
@@ -130,7 +124,7 @@ const loadTask = (dispatch: Dispatch<PersonalActionType>) => {
 };
 
 export const { Provider, Context } = createDataContext(
-  personalReducer,
+  teamReducer,
   { createNewTask, loadTask },
   { tasks: [], errorMessage: "" }
 );

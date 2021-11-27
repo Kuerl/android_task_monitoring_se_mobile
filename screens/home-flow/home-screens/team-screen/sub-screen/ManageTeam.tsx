@@ -58,7 +58,11 @@ const ManageTeam: React.FC<TeamStackProps> = ({ navigation }) => {
             return (
               <TouchableOpacity
                 style={styles.btn}
-                onPress={() => navigation.navigate("TeamBottomTab")}
+                onPress={() =>
+                  navigation.navigate("TeamBottomTab", {
+                    pkTeam_Id: item.pkTeam_Id,
+                  })
+                }
               >
                 <Text style={styles.text}>{item.teamName}</Text>
               </TouchableOpacity>

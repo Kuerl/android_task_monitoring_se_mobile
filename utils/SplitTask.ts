@@ -1,7 +1,8 @@
 import { EventType } from "../components/TaskTimeline";
+import {TaskType} from "../constants/TaskType";
 
 export const splitTask = (taskList: any) => {
-  let events = taskList.reduce((arr: EventType[], val: any) => {
+  let events = taskList.reduce((arr: EventType[], val: TaskType) => {
     // Split the tasks last longer than 1 day
     // Calculate the different in days
     const startDate = new Date(val.start.slice(0, 10));

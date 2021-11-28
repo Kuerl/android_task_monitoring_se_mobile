@@ -1,8 +1,14 @@
-import React, { useReducer, useState } from "react";
-import { Text, StyleSheet } from "react-native";
+import React, { useReducer, useState, useContext, useEffect } from "react";
+import { Text, StyleSheet, View } from "react-native";
 
-import { Input, Button } from "react-native-elements";
+import { Input, Button, CheckBox } from "react-native-elements";
+import { NewPersonalTaskType } from "../context/PersonalContext";
 import DateTimePicker from "./DateTimePicker";
+
+import { Context as AuthContext } from "../context/AuthContext";
+import { Context as TeamContext, Member } from "../context/TeamContext";
+import { AuthContextType, TeamContextType } from "../context/ContextTypes";
+import { NewTeamTaskType } from "../context/TeamTaskContext";
 
 export type SwitchState = {
   startTimeSwitch: boolean;
@@ -14,6 +20,14 @@ export type SwitchState = {
 export type SwitchAction = {
   type: "SWITCH_DATE" | "SWITCH_TIME";
   payload: "START" | "FINISH";
+};
+
+type AddTaskFormProps = {
+  type: "Personal" | "Team";
+  createNewTask:
+    | ((props: NewPersonalTaskType) => void)
+    | ((props: NewTeamTaskType) => void);
+  pkTeam_Id: string;
 };
 
 // Reducer handle the switch button for date and time
@@ -50,18 +64,37 @@ const reducer = (state: SwitchState, action: SwitchAction) => {
 
 // AddTaskForm will be used for both Personal and Team
 // so addTask must be assigned for suitable action
-const AddTaskForm: React.FC = () => {
+const AddTaskForm: React.FC<AddTaskFormProps> = ({
+  type,
+  createNewTask,
+  pkTeam_Id,
+}) => {
   // Context for action submit form
-  //const { state } = useContext(AuthContext);
-  //checkStatus.filter(task => console.log(task))
+  const { state }: AuthContextType = useContext(AuthContext);
+  const teamState: TeamContextType = useContext(TeamContext);
+
+  // Team member for allocation in add task form
+  const [teamMembers, setTeamMembers] = useState<Member[]>([]);
+
+  useEffect(() => {
+    if (teamState && type === "Team") {
+      setTeamMembers(
+        teamState.state.team.filter((team) => team.pkTeam_Id === pkTeam_Id)[0]
+          .members
+      );
+    }
+  }, [teamState]);
 
   // State handle form value
   const [title, setTitle] = useState("");
-  const [details, setDetails] = useState("");
+  const [content, setContent] = useState("");
   const [startDate, setStartDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [finishDate, setFinishDate] = useState("");
   const [finishTime, setFinishTime] = useState("");
+
+  // State to handle user checkbox
+  const [user, setUser] = useState("");
 
   // Reducer for handle switch
   const [switchState, switchDispatch] = useReducer(reducer, {
@@ -84,14 +117,31 @@ const AddTaskForm: React.FC = () => {
         onChangeText={setTitle}
       />
       <Input
-        placeholder="Describe task details (optional)"
+        placeholder="Describe task content (optional)"
         leftIcon={{ type: "feather", name: "info", color: "white" }}
         style={styles.input}
-        label="Details"
+        label="Content"
         labelStyle={styles.label}
-        value={details}
-        onChangeText={setDetails}
+        value={content}
+        onChangeText={setContent}
       />
+      {type === "Team" ? (
+        <View style={styles.allocationContainer}>
+          <Text style={styles.allocationLabel}>Allocated To:</Text>
+          {teamMembers.map((member) => {
+            return (
+              <CheckBox
+                key={member.user.username}
+                title={member.user.username}
+                checkedIcon="dot-circle-o"
+                uncheckedIcon="circle-o"
+                checked={member.user.username === user}
+                onPress={() => setUser(member.user.username)}
+              />
+            );
+          })}
+        </View>
+      ) : null}
       <DateTimePicker
         name="START"
         value={{
@@ -122,9 +172,19 @@ const AddTaskForm: React.FC = () => {
       />
       <Button
         title="Add Task"
-        onPress={() => {
-          console.log("Add Task");
-        }}
+        onPress={() =>
+          createNewTask({
+            username: state.username,
+            pkTeam_Id: pkTeam_Id,
+            taskData: {
+              title,
+              content,
+              start: startDate + " " + startTime,
+              due: finishDate + " " + finishTime,
+              user: user,
+            },
+          })
+        }
       />
     </>
   );
@@ -144,6 +204,15 @@ const styles = StyleSheet.create({
   input: {
     color: "white",
     paddingLeft: 8,
+  },
+  allocationContainer: {
+    top: -5,
+    marginBottom: 10,
+  },
+  allocationLabel: {
+    color: "white",
+    fontSize: 20,
+    paddingLeft: 15,
   },
 });
 

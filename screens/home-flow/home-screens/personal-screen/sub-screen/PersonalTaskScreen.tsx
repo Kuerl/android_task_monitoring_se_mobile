@@ -1,22 +1,36 @@
-import React from "react";
+import React, { useEffect, useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import { FAB } from "react-native-elements";
 
-import CalendarBar from "../../../../../components/CalendarBar";
 import TaskTimeline from "../../../../../components/TaskTimeline";
 import { PersonalTabList } from "../PersonalTabList";
 import { DrawerScreenProps } from "@react-navigation/drawer";
 
+import { Context as AuthContext } from "../../../../../context/AuthContext";
+import { AuthContextType } from "../../../../../context/ContextTypes";
+
+import { Context as PersonalContext } from "../../../../../context/PersonalContext";
+import { PersonalContextType } from "../../../../../context/ContextTypes";
+
+import { splitTask } from "../../../../../utils/SplitTask";
+
 type PersonalDrawerProps = DrawerScreenProps<PersonalTabList, "PersonalTask">;
 
 const PersonalTaskScreen: React.FC<PersonalDrawerProps> = ({ navigation }) => {
+  const { state, loadTask }: PersonalContextType = useContext(PersonalContext);
+  const authContext: AuthContextType = useContext(AuthContext);
+
+  useEffect(() => {
+    loadTask({ username: authContext.state.username });
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.header} />
-      <CalendarBar>
-        {/* <Text style={styles.emptyItemText}>Personal Task Here</Text> */}
-        <TaskTimeline />
-      </CalendarBar>
+      <TaskTimeline
+        events={splitTask(state.tasks)}
+        refresh={() => loadTask({ username: authContext.state.username })}
+      />
       <FAB
         // title="Create Team"
         color="#439DE4"

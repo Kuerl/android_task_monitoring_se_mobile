@@ -1,19 +1,34 @@
 import { Dimensions } from "react-native";
 
-export const svurl: string = 'http://128.199.66.87:3000/';
+export const svurl: string = "http://128.199.66.87:3000/";
 
 export const signform = {
   none: -1,
   in: 0,
   up: 1,
   ins: 999,
-}
+};
 
-export type HomeBottomList = {
-  PersonalFlow: undefined;
-  TeamFlow: undefined;
+export type RootParamsList = {
+  PersonalTask: undefined;
+  AddPersonalTask: undefined;
+  ManageTeam: undefined;
+  TeamTask: undefined;
+  AddTeamTask: undefined;
+  TeamChat: undefined;
+  TeamInfo: undefined;
   Info: undefined;
 };
 
-export const windowWidth = Dimensions.get('window').width;
-export const windowHeight = Dimensions.get('window').height;
+export type RootScreensList =
+  | "PersonalTask"
+  | "AddPersonalTask"
+  | "ManageTeam"
+  | "TeamTask"
+  | "AddTeamTask"
+  | "TeamChat"
+  | "TeamInfo"
+  | "Info";
+
+export const windowWidth = Dimensions.get("window").width;
+export const windowHeight = Dimensions.get("window").height;

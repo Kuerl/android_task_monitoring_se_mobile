@@ -7,7 +7,6 @@ import { HomeScreensList } from "./HomeScreensList";
 import PersonalFlow from "./home-screens/personal-screen/PersonalFlow";
 import TeamFlow from "./home-screens/team-screen/TeamFlow";
 import InfoScreen from "./home-screens/info-screen/InfoScreen";
-import { HomeBottomList } from "../../constants/Constant";
 
 const HomeBottomTab = createMaterialBottomTabNavigator<HomeScreensList>();
 

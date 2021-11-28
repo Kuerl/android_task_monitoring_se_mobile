@@ -1,27 +1,39 @@
-import { DrawerScreenProps } from "@react-navigation/drawer";
-import React from "react";
+import React, { useEffect, useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import { FAB } from "react-native-elements";
+import { DrawerScreenProps } from "@react-navigation/drawer";
 
-import CalendarBar from "../../../../../components/CalendarBar";
 import TaskTimeline from "../../../../../components/TaskTimeline";
 import { TeamTabList } from "../TeamFlowList";
+import { Context as TeamTaskContext } from "../../../../../context/TeamTaskContext";
+import { TeamTaskContextType } from "../../../../../context/ContextTypes";
+import { splitTask } from "../../../../../utils/SplitTask";
 
 type TeamDrawerProps = DrawerScreenProps<TeamTabList, "TeamTask">;
 
-const TeamTaskScreen: React.FC<TeamDrawerProps> = ({ navigation }) => {
+const TeamTaskScreen: React.FC<TeamDrawerProps> = ({ navigation, route }) => {
+  const { state, loadTask }: TeamTaskContextType = useContext(TeamTaskContext);
+
+  useEffect(() => {
+    loadTask(route.params);
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.header} />
-      <CalendarBar>
-        {/* <Text style={styles.emptyItemText}>Team Task Here</Text> */}
-        <TaskTimeline />
-      </CalendarBar>
+      <TaskTimeline
+        events={splitTask(state.tasks)}
+        refresh={() => loadTask(route.params)}
+      />
       <FAB
         color="#439DE4"
         icon={{ type: "feather", name: "plus", color: "white" }}
         placement="right"
-        onPress={() => navigation.navigate("AddTeamTask")}
+        onPress={() =>
+          navigation.navigate("AddTeamTask", {
+            pkTeam_Id: route.params.pkTeam_Id,
+          })
+        }
       />
     </View>
   );

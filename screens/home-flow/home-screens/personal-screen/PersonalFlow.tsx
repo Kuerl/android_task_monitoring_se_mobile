@@ -9,6 +9,8 @@ import PersonalTaskScreen from "./sub-screen/PersonalTaskScreen";
 import AddPersonalTask from "./sub-screen/AddPersonalTask";
 import DrawerContent from "../../../../components/DrawerContent";
 
+import { Provider as PersonalProvider } from "../../../../context/PersonalContext";
+
 const PersonalDrawer = createDrawerNavigator<PersonalTabList>();
 
 function CustomDrawerContent(props: any) {
@@ -21,22 +23,24 @@ function CustomDrawerContent(props: any) {
 
 const PersonalFlow: React.FC = () => {
   return (
-    <PersonalDrawer.Navigator
-      initialRouteName="PersonalTask"
-      // screenOptions={{ headerShown: false }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-    >
-      <PersonalDrawer.Screen
-        name="PersonalTask"
-        component={PersonalTaskScreen}
-        options={{ title: "View Personal Tasks" }}
-      />
-      <PersonalDrawer.Screen
-        name="AddPersonalTask"
-        component={AddPersonalTask}
-        options={{ title: "Create Personal Tasks" }}
-      />
-    </PersonalDrawer.Navigator>
+    <PersonalProvider>
+      <PersonalDrawer.Navigator
+        initialRouteName="PersonalTask"
+        // screenOptions={{ headerShown: false }}
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
+      >
+        <PersonalDrawer.Screen
+          name="PersonalTask"
+          component={PersonalTaskScreen}
+          options={{ title: "View Personal Tasks" }}
+        />
+        <PersonalDrawer.Screen
+          name="AddPersonalTask"
+          component={AddPersonalTask}
+          options={{ title: "Create Personal Tasks" }}
+        />
+      </PersonalDrawer.Navigator>
+    </PersonalProvider>
   );
 };
 

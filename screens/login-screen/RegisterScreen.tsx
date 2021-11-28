@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { loginStyles } from './styles/LoginStyle';
 import * as Animatable from 'react-native-animatable';
 import __logo from '../../assets/images/atm_logo_mini.png';

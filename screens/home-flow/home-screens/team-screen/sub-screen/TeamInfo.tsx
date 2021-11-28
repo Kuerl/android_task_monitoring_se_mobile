@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
-import { Text, View, StyleSheet, ScrollView } from "react-native";
+import { Text, View, StyleSheet, ScrollView, Button } from "react-native";
 
-import { Avatar, Card } from "react-native-elements";
+import { Avatar, Card, Input } from "react-native-elements";
 import { TeamContextType } from "../../../../../context/ContextTypes";
 import {
   Context as TeamContext,
@@ -9,6 +9,7 @@ import {
 } from "../../../../../context/TeamContext";
 import { TeamTabList } from "../TeamFlowList";
 import { DrawerScreenProps } from "@react-navigation/drawer";
+import axios from "../../../../../utils/AxiosBase";
 
 type TeamDrawerProps = DrawerScreenProps<TeamTabList, "TeamInfo">;
 
@@ -22,11 +23,24 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
     pkTeam_Id: "",
     members: [],
   });
+  const [newMember, setNewMember] = useState("");
 
   useEffect(() => {
     loadTeamMembers(route.params);
     setTeamInfo(getTeamInfo(route.params.pkTeam_Id, state.team));
   }, [state.team]);
+
+  const addTeamMembers = async (pkTeam_Id: string, username: string) => {
+    try {
+      const res = await axios.post("/team/" + pkTeam_Id, {
+        username: [username],
+      });
+      setNewMember("");
+      console.log(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -39,6 +53,19 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
           modi expedita molestias laboriosam nostrum ullam ducimus quibusdam!
           Natus ullam voluptatem facilis dicta neque!
         </Text>
+        <Text style={styles.addUserTitle}>Add New Member To Team</Text>
+        <Input
+          placeholder="Add username"
+          value={newMember}
+          onChangeText={setNewMember}
+          autoCorrect={false}
+          autoCapitalize="none"
+        />
+        <Button
+          disabled={newMember.replace(/\s/g, "").length ? false : true}
+          title="Add member"
+          onPress={() => addTeamMembers(teamInfo.pkTeam_Id, newMember)}
+        />
         <Card.Divider color="black" />
         <Card.FeaturedTitle style={styles.subTitle}>Members</Card.FeaturedTitle>
         {teamInfo.members.map((u, i) => {
@@ -52,8 +79,7 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
                 onPress={() => console.log("Works!")}
               />
               <Text style={styles.memberName}>
-                {u.user.firstName + " " + u.user.lastName}{" "}
-                {" - "}
+                {u.user.firstName + " " + u.user.lastName} {" - "}
                 {u.user.username}
                 {u.memberRole === "Admin" ? " (Manager)" : null}
               </Text>
@@ -87,6 +113,11 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     color: "black",
+  },
+  addUserTitle: {
+    fontSize: 24,
+    marginVertical: 10,
+    textAlign: "center",
   },
   memberContainer: {
     flexDirection: "row",

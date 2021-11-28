@@ -3,7 +3,7 @@ import axios from "../utils/AxiosBase";
 import { Dispatch } from "react";
 import * as RootNavigation from "../utils/NavigationRef";
 
-type Member = {
+export type Member = {
   memberRole: "Admin" | "Member";
   user: {
     username: string;

@@ -73,9 +73,12 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
   const { state }: AuthContextType = useContext(AuthContext);
   const teamState: TeamContextType = useContext(TeamContext);
 
-  const teamMembers = teamState.state.team.filter(
-    (team) => team.pkTeam_Id === pkTeam_Id
-  )[0].members;
+  let teamMembers;
+  if (teamState && type === "Team") {
+    teamMembers = teamState.state.team.filter(
+      (team) => team.pkTeam_Id === pkTeam_Id
+    )[0].members;
+  }
 
   // State handle form value
   const [title, setTitle] = useState("");
@@ -84,6 +87,9 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
   const [startTime, setStartTime] = useState("");
   const [finishDate, setFinishDate] = useState("");
   const [finishTime, setFinishTime] = useState("");
+
+  // State to handle user checkbox
+  const [user, setUser] = useState("");
 
   // Reducer for handle switch
   const [switchState, switchDispatch] = useReducer(reducer, {
@@ -114,7 +120,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
         value={content}
         onChangeText={setContent}
       />
-      {type === "Team" ? (
+      {teamMembers && type === "Team" ? (
         <View style={styles.allocationContainer}>
           <Text style={styles.allocationLabel}>Allocated To:</Text>
           {teamMembers.map((member) => {
@@ -124,8 +130,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
                 title={member.user.username}
                 checkedIcon="dot-circle-o"
                 uncheckedIcon="circle-o"
-                // checked={user.check}
-                // onPress={() => setCheck(user.username)}
+                checked={member.user.username === user}
+                onPress={() => setUser(member.user.username)}
               />
             );
           })}
@@ -170,6 +176,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
               content,
               start: startDate + " " + startTime,
               due: finishDate + " " + finishTime,
+              user: user,
             },
           })
         }

@@ -70,11 +70,13 @@ const TeamDrawerComponent: React.FC<TeamStackProps> = ({ route }) => {
         name="TeamChat"
         component={TeamChat}
         options={{ title: "Team Chat" }}
+        initialParams={route.params}
       />
       <TeamDrawer.Screen
         name="TeamInfo"
         component={TeamInfo}
         options={{ title: "Your Team Information" }}
+        initialParams={route.params}
       />
     </TeamDrawer.Navigator>
   );

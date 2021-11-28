@@ -6,7 +6,7 @@ import { NewPersonalTaskType } from "../context/PersonalContext";
 import DateTimePicker from "./DateTimePicker";
 
 import { Context as AuthContext } from "../context/AuthContext";
-import { Context as TeamContext } from "../context/TeamContext";
+import { Context as TeamContext, Member } from "../context/TeamContext";
 import { AuthContextType, TeamContextType } from "../context/ContextTypes";
 import { NewTeamTaskType } from "../context/TeamTaskContext";
 
@@ -73,12 +73,17 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
   const { state }: AuthContextType = useContext(AuthContext);
   const teamState: TeamContextType = useContext(TeamContext);
 
-  let teamMembers;
-  if (teamState && type === "Team") {
-    teamMembers = teamState.state.team.filter(
-      (team) => team.pkTeam_Id === pkTeam_Id
-    )[0].members;
-  }
+  // Team member for allocation in add task form
+  const [teamMembers, setTeamMembers] = useState<Member[]>([]);
+
+  useEffect(() => {
+    if (teamState && type === "Team") {
+      setTeamMembers(
+        teamState.state.team.filter((team) => team.pkTeam_Id === pkTeam_Id)[0]
+          .members
+      );
+    }
+  }, [teamState]);
 
   // State handle form value
   const [title, setTitle] = useState("");
@@ -120,7 +125,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
         value={content}
         onChangeText={setContent}
       />
-      {teamMembers && type === "Team" ? (
+      {type === "Team" ? (
         <View style={styles.allocationContainer}>
           <Text style={styles.allocationLabel}>Allocated To:</Text>
           {teamMembers.map((member) => {

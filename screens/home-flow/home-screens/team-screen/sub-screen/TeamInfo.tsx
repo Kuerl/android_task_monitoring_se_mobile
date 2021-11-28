@@ -1,46 +1,37 @@
-import React from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { Text, View, StyleSheet, ScrollView } from "react-native";
 
 import { Avatar, Card } from "react-native-elements";
+import { TeamContextType } from "../../../../../context/ContextTypes";
+import {
+  Context as TeamContext,
+  TeamType,
+} from "../../../../../context/TeamContext";
+import { TeamTabList } from "../TeamFlowList";
+import { DrawerScreenProps } from "@react-navigation/drawer";
 
-type Users = {
-  name: string;
-  avatar?: string;
-  role: "Manager" | "Member";
-}[];
+type TeamDrawerProps = DrawerScreenProps<TeamTabList, "TeamInfo">;
 
-const TeamInfo: React.FC = () => {
-  const users: Users = [
-    {
-      name: "Tran Tan Tai",
-      role: "Manager",
-    },
-    {
-      name: "Vo Anh Viet",
-      role: "Member",
-    },
-    {
-      name: "Nguyen Duc Anh Tai",
-      role: "Member",
-    },
-    {
-      name: "Nguyen Le Chi Tam",
-      role: "Member",
-    },
-    {
-      name: "Tran Doan Quoc Dat",
-      role: "Member",
-    },
-    {
-      name: "Le Thanh Chuong",
-      role: "Member",
-    },
-  ];
+const getTeamInfo = (pkTeam_Id: string, teamList: TeamType[]) =>
+  teamList.filter((team) => team.pkTeam_Id === pkTeam_Id)[0];
+
+const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
+  const { state, loadTeamMembers }: TeamContextType = useContext(TeamContext);
+  const [teamInfo, setTeamInfo] = useState<TeamType>({
+    teamName: "Your Team Name",
+    pkTeam_Id: "",
+    members: [],
+  });
+
+  useEffect(() => {
+    loadTeamMembers(route.params);
+    setTeamInfo(getTeamInfo(route.params.pkTeam_Id, state.team));
+  }, [state.team]);
 
   return (
     <ScrollView style={styles.container}>
       <Card containerStyle={styles.cardContainer}>
-        <Card.Title style={styles.teamName}>Software Engineer Team</Card.Title>
+        <Card.Title style={styles.teamName}>{teamInfo.teamName}</Card.Title>
         <Card.Divider color="black" />
         <Text style={styles.teamDetails}>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
@@ -50,18 +41,21 @@ const TeamInfo: React.FC = () => {
         </Text>
         <Card.Divider color="black" />
         <Card.FeaturedTitle style={styles.subTitle}>Members</Card.FeaturedTitle>
-        {users.map((u, i) => {
+        {teamInfo.members.map((u, i) => {
           return (
             <View key={i} style={styles.memberContainer}>
               <Avatar
                 size="medium"
                 containerStyle={styles.avatar}
                 rounded
-                title={u.name[0]}
+                title={u.user.firstName[0]}
                 onPress={() => console.log("Works!")}
               />
               <Text style={styles.memberName}>
-                {u.name} {u.role === "Manager" ? "- Manager" : null}
+                {u.user.firstName + " " + u.user.lastName}{" "}
+                {" - "}
+                {u.user.username}
+                {u.memberRole === "Admin" ? " (Manager)" : null}
               </Text>
             </View>
           );

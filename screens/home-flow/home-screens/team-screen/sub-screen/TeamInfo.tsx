@@ -28,7 +28,7 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
   useEffect(() => {
     loadTeamMembers(route.params);
     setTeamInfo(getTeamInfo(route.params.pkTeam_Id, state.team));
-  }, [state.team]);
+  }, []);
 
   const addTeamMembers = async (pkTeam_Id: string, username: string) => {
     try {
@@ -36,6 +36,8 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
         username: [username],
       });
       setNewMember("");
+      loadTeamMembers(route.params);
+      setTeamInfo(getTeamInfo(route.params.pkTeam_Id, state.team));
       console.log(res.data);
     } catch (err) {
       console.log(err);

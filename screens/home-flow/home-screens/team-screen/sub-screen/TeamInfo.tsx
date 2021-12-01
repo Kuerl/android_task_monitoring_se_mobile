@@ -56,13 +56,12 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
 
   const addTeamMembers = async (pkTeam_Id: string, username: string) => {
     try {
-      const res = await axios.post("/team/" + pkTeam_Id, {
+      await axios.post("/team/" + pkTeam_Id, {
         username: [username],
       });
       setNewMember("");
       loadTeamMembers(route.params);
       setTeamInfo(getTeamInfo(route.params.pkTeam_Id, state.team));
-      console.log(res.data);
     } catch (err) {
       console.log(err);
     }

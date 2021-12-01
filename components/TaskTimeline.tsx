@@ -17,6 +17,7 @@ export type EventType = {
   end: string;
   title: string;
   summary: string;
+  user?: { username: string }; // using in TeamTask
   color?: string;
 };
 
@@ -38,13 +39,17 @@ const TaskTimeline: React.FC<TimelineProps> = ({ events, refresh, type }) => {
   const itemPressed = (event: EventType) => {
     Alert.alert(
       event.title,
-      `Summary: ${
+      `\nSummary: ${
         event.summary.length
           ? event.summary
-          : "This is task does not have summary information"
-      }\nStarting Time: ${event.start} ${
+          : "This task does not have summary information"
+      }\n\n${
+        type === "Team" && event.user
+          ? "Allocated To: " + event.user.username + "\n\n"
+          : ""
+      }Starting Time: ${event.start} ${
         event.start.length <= 10 ? "00:00" : ""
-      }\nFinishing Time: ${event.end}\n`,
+      }\n\nFinishing Time: ${event.end}\n`,
       [
         {
           text: "Cancel",

@@ -1,5 +1,5 @@
 import { EventType } from "../components/TaskTimeline";
-import {TaskType} from "../constants/TaskType";
+import { TaskType } from "../constants/TaskType";
 
 export const splitTask = (taskList: any) => {
   let events = taskList.reduce((arr: EventType[], val: TaskType) => {
@@ -21,6 +21,7 @@ export const splitTask = (taskList: any) => {
           summary: val.content,
           start: splitTaskStart,
           end: splitTaskStart + " 23:59:59",
+          user: val.user,
         };
 
         if (i == 0) {
@@ -38,6 +39,7 @@ export const splitTask = (taskList: any) => {
         end: val.due,
         title: val.title,
         summary: val.content,
+        user: val.user,
       });
     }
     return arr;

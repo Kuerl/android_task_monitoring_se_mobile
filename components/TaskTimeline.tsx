@@ -25,13 +25,19 @@ type TimelineProps = {
   events: EventType[];
   refresh: () => void;
   type: "Personal" | "Team";
+  pkTeam_Id?: string;
 };
 
 const wait = (timeout: number) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
 };
 
-const TaskTimeline: React.FC<TimelineProps> = ({ events, refresh, type }) => {
+const TaskTimeline: React.FC<TimelineProps> = ({
+  events,
+  refresh,
+  type,
+  pkTeam_Id,
+}) => {
   const { state }: AuthContextType = useContext(AuthContext);
   const [refreshing, setRefreshing] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -57,14 +63,27 @@ const TaskTimeline: React.FC<TimelineProps> = ({ events, refresh, type }) => {
         },
         {
           text: "Delete",
-          onPress: () => {
+          onPress: async () => {
             try {
-              type === "Personal"
-                ? axios.delete(
+              let res;
+              switch (type) {
+                case "Personal":
+                  res = await axios.delete(
                     `/task/personal/${state.username}/${event.pkTask_Id}`
-                  )
-                : console.log("Delete team task");
-              refresh();
+                  );
+                  break;
+                case "Team":
+                  res = await axios.delete(
+                    `/task/team/${pkTeam_Id}/${event.pkTask_Id}/${state.username}`
+                  );
+                  console.log(res.data);
+                  break;
+              }
+              if (res.data.effect) {
+                refresh();
+              } else {
+                Alert.alert("You cannot delete this task!");
+              }
             } catch (err) {
               console.log(err);
             }

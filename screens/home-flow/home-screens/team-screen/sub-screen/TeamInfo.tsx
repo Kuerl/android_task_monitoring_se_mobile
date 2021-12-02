@@ -22,11 +22,9 @@ import { TeamTabList } from "../TeamFlowList";
 import { DrawerScreenProps } from "@react-navigation/drawer";
 import axios from "../../../../../utils/AxiosBase";
 import * as RootNavigation from "../../../../../utils/NavigationRef";
+import { getTeamInfo } from "../../../../../utils/getTeamInfo";
 
 type TeamDrawerProps = DrawerScreenProps<TeamTabList, "TeamInfo">;
-
-const getTeamInfo = (pkTeam_Id: string, teamList: TeamType[]) =>
-  teamList.filter((team) => team.pkTeam_Id === pkTeam_Id)[0];
 
 const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
   const { state, loadTeamMembers, loadAllTeam }: TeamContextType =
@@ -84,13 +82,13 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
         },
         {
           text: "Delete",
-          onPress: () => {
+          onPress: async () => {
             try {
               if (
                 manager === authContext.state.username &&
                 manager !== member.user.username
               ) {
-                axios.delete(
+                await axios.delete(
                   `/team/${teamInfo.pkTeam_Id}/${authContext.state.username}/duser/${member.user.username}`
                 );
                 loadTeamMembers(route.params);
@@ -165,8 +163,8 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
           type="solid"
           title="Out Team"
           buttonStyle={styles.btn}
-          onPress={() => {
-            axios.delete(
+          onPress={async () => {
+            await axios.delete(
               `/team/${teamInfo.pkTeam_Id}/out/${authContext.state.username}`
             );
             loadAllTeam({ username: authContext.state.username });

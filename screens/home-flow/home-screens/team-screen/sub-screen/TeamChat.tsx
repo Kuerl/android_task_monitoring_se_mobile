@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,8 @@ import { TeamTabList } from "../TeamFlowList";
 import axios from "../../../../../utils/AxiosBase";
 import { Context as AuthContext } from "../../../../../context/AuthContext";
 import { AuthContextType } from "../../../../../context/ContextTypes";
+
+import { io } from "socket.io-client";
 
 type msg = {
   content: string;
@@ -56,6 +58,8 @@ const TeamChat: React.FC<TeamDrawerProps> = ({ route }) => {
   const [messages, setMessages] = useState<msg[]>([]);
   const [input, setInput] = useState("");
 
+  const msgsListRef = useRef<FlatList>(null);
+
   // Effect to fetch all team msg before
   useEffect(() => {
     async function fetchAllMsgs() {
@@ -71,6 +75,7 @@ const TeamChat: React.FC<TeamDrawerProps> = ({ route }) => {
           new Date(a.create_up) > new Date(b.create_up) ? 1 : 0
         );
         // Set the data to state
+        setMessages([]); // Clear old msgs first
         msgs.data.map((mes) => {
           setMessages((prevMsg) => [
             ...prevMsg,
@@ -86,15 +91,42 @@ const TeamChat: React.FC<TeamDrawerProps> = ({ route }) => {
     }
 
     fetchAllMsgs();
+    // Initialzie socket
+    const socket = io("http://128.199.66.87:3000");
+    socket.on("connect", () => {
+      console.log("Socket connected");
+    });
+
+    // Listen to the team channel
+    socket.on(`${route.params.pkTeam_Id}`, (msg: FetchedMessages) => {
+      setMessages((prevMsgs) => [
+        ...prevMsgs,
+        {
+          content: msg.message,
+          float: msg.username === state.username ? "right" : "left",
+        },
+      ]);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   return (
     <View style={styles.container}>
       <FlatList
+        ref={msgsListRef}
         style={styles.msgView}
         renderItem={(item) => <MessageView {...item} />}
         data={messages}
         keyExtractor={(item, index) => index.toString()}
+        onContentSizeChange={() =>
+          msgsListRef.current ? msgsListRef.current.scrollToEnd() : null
+        }
+        onLayout={() =>
+          msgsListRef.current ? msgsListRef.current.scrollToEnd() : null
+        }
       />
       <View style={styles.msgInput}>
         <TextInput style={styles.input} value={input} onChangeText={setInput} />
@@ -106,10 +138,6 @@ const TeamChat: React.FC<TeamDrawerProps> = ({ route }) => {
                 `/message/${route.params.pkTeam_Id}/${state.username}`,
                 { message: input, flag: false }
               );
-              setMessages((prevMsgs) => [
-                ...prevMsgs,
-                { content: input, float: "right" },
-              ]);
               setInput("");
             } catch (err) {
               console.log(err);

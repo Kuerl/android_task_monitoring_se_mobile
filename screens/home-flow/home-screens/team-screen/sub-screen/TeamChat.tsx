@@ -19,7 +19,9 @@ import { AuthContextType } from "../../../../../context/ContextTypes";
 
 import { io } from "socket.io-client";
 
-type msg = {
+type Message = {
+  username: string;
+  createdDate: string;
   content: string;
   float: "left" | "right";
 };
@@ -33,7 +35,7 @@ type FetchedMessages = {
 
 type TeamDrawerProps = DrawerScreenProps<TeamTabList, "TeamChat">;
 
-const MessageView: ListRenderItem<msg> = ({ item }) => {
+const MessageView: ListRenderItem<Message> = ({ item }) => {
   return (
     <View
       style={[
@@ -41,6 +43,7 @@ const MessageView: ListRenderItem<msg> = ({ item }) => {
         item.float === "left" ? styles.floatLeft : styles.floatRight,
       ]}
     >
+      <Text style={styles.infoTxt}>{item.username}</Text>
       <Text
         style={[
           styles.msgContent,
@@ -55,7 +58,7 @@ const MessageView: ListRenderItem<msg> = ({ item }) => {
 
 const TeamChat: React.FC<TeamDrawerProps> = ({ route }) => {
   const { state }: AuthContextType = useContext(AuthContext);
-  const [messages, setMessages] = useState<msg[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
 
   const msgsListRef = useRef<FlatList>(null);
@@ -80,6 +83,8 @@ const TeamChat: React.FC<TeamDrawerProps> = ({ route }) => {
           setMessages((prevMsg) => [
             ...prevMsg,
             {
+              username: mes.username,
+              createdDate: mes.create_up,
               content: mes.message,
               float: mes.username === state.username ? "right" : "left",
             },
@@ -102,6 +107,8 @@ const TeamChat: React.FC<TeamDrawerProps> = ({ route }) => {
       setMessages((prevMsgs) => [
         ...prevMsgs,
         {
+          username: msg.username,
+          createdDate: msg.create_up,
           content: msg.message,
           float: msg.username === state.username ? "right" : "left",
         },
@@ -192,7 +199,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   floatContainer: {
-    marginTop: 15,
+    marginTop: 30,
     flexDirection: "row",
   },
   floatLeft: {
@@ -200,6 +207,12 @@ const styles = StyleSheet.create({
   },
   floatRight: {
     justifyContent: "flex-end",
+  },
+  infoTxt: {
+    color: "white",
+    position: "absolute",
+    top: -20,
+    paddingHorizontal: 5,
   },
   msgContent: {
     borderRadius: 15,

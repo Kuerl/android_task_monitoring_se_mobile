@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -9,12 +9,27 @@ import {
   ListRenderItem,
 } from "react-native";
 
+import { DrawerScreenProps } from "@react-navigation/drawer";
 import { Icon } from "react-native-elements";
+import { TeamTabList } from "../TeamFlowList";
+
+import axios from "../../../../../utils/AxiosBase";
+import { Context as AuthContext } from "../../../../../context/AuthContext";
+import { AuthContextType } from "../../../../../context/ContextTypes";
 
 type msg = {
   content: string;
   float: "left" | "right";
 };
+
+type FetchedMessages = {
+  message: string;
+  flag: boolean;
+  create_up: string;
+  username: string;
+};
+
+type TeamDrawerProps = DrawerScreenProps<TeamTabList, "TeamChat">;
 
 const MessageView: ListRenderItem<msg> = ({ item }) => {
   return (
@@ -36,12 +51,42 @@ const MessageView: ListRenderItem<msg> = ({ item }) => {
   );
 };
 
-const TeamChat: React.FC = () => {
-  const [messages, setMessages] = useState<msg[]>([
-    { content: "Hello", float: "left" },
-    { content: "Hi", float: "right" },
-  ]);
+const TeamChat: React.FC<TeamDrawerProps> = ({ route }) => {
+  const { state }: AuthContextType = useContext(AuthContext);
+  const [messages, setMessages] = useState<msg[]>([]);
   const [input, setInput] = useState("");
+
+  // Effect to fetch all team msg before
+  useEffect(() => {
+    async function fetchAllMsgs() {
+      try {
+        type MsgsType = {
+          data: FetchedMessages[];
+        };
+        const msgs: MsgsType = await axios.get(
+          `/message/${route.params.pkTeam_Id}`
+        );
+        // Sort all the msgs in order of increasing created time
+        msgs.data.sort((a: FetchedMessages, b: FetchedMessages) =>
+          new Date(a.create_up) > new Date(b.create_up) ? 1 : 0
+        );
+        // Set the data to state
+        msgs.data.map((mes) => {
+          setMessages((prevMsg) => [
+            ...prevMsg,
+            {
+              content: mes.message,
+              float: mes.username === state.username ? "right" : "left",
+            },
+          ]);
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    fetchAllMsgs();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -55,8 +100,20 @@ const TeamChat: React.FC = () => {
         <TextInput style={styles.input} value={input} onChangeText={setInput} />
         <TouchableOpacity
           style={styles.btn}
-          onPress={() => {
-            console.log("SEND MSG");
+          onPress={async () => {
+            try {
+              await axios.post(
+                `/message/${route.params.pkTeam_Id}/${state.username}`,
+                { message: input, flag: false }
+              );
+              setMessages((prevMsgs) => [
+                ...prevMsgs,
+                { content: input, float: "right" },
+              ]);
+              setInput("");
+            } catch (err) {
+              console.log(err);
+            }
           }}
         >
           <Icon name="send" type="font-awesome" iconStyle={styles.sendIcon} />

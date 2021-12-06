@@ -4,5 +4,5 @@ export type TaskType = {
   content: string;
   start: string;
   due: string;
-  user?: string; // using in TeamTask
+  user?: { username: string }; // using in TeamTask
 };

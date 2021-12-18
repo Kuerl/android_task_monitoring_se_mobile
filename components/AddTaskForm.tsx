@@ -205,15 +205,15 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
               },
             });
 
-            // Reset all information
-            setTitle("");
-            setContent("");
-            switchDispatch({ type: "RESET" });
-            setStartDate("");
-            setStartTime("");
-            setFinishDate("");
-            setFinishTime("");
-            setUser("");
+//             // Reset all information
+//             setTitle("");
+//             setContent("");
+//             switchDispatch({ type: "RESET" });
+//             setStartDate("");
+//             setStartTime("");
+//             setFinishDate("");
+//             setFinishTime("");
+//             setUser("");
           }
         }}
       />

@@ -96,8 +96,13 @@ const createNewTask = (dispatch: Dispatch<PersonalActionType>) => {
           type: "add_task",
           payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
         });
-        Alert.alert("Your personal task has been created successfully!");
-        RootNavigation.navigate("PersonalTask");
+        Alert.alert("Your personal task has been created successfully!", "", [
+          {
+            text: "Ok",
+            style: "default",
+            onPress: () => RootNavigation.dispatch("PersonalTask"),
+          },
+        ]);
       } else {
         dispatch({
           type: "add_err",

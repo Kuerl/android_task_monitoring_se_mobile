@@ -201,6 +201,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
                 start: startDate + " " + startTime,
                 due: finishDate + " " + finishTime,
                 user: { username: user },
+                done: false,
               },
             });
 

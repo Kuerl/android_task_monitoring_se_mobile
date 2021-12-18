@@ -7,6 +7,8 @@ import {
   ExpandableCalendar,
   Timeline,
 } from "react-native-calendars";
+import EventComponent from "./EventComponent";
+
 import axios from "../utils/AxiosBase";
 import { AuthContextType } from "../context/ContextTypes";
 import { Context as AuthContext } from "../context/AuthContext";
@@ -19,6 +21,7 @@ export type EventType = {
   summary: string;
   user?: { username: string }; // using in TeamTask
   color?: string;
+  done?: boolean;
 };
 
 type TimelineProps = {
@@ -49,7 +52,7 @@ const TaskTimeline: React.FC<TimelineProps> = ({
         event.summary.length
           ? event.summary
           : "This task does not have summary information"
-      }\n\n${
+      }\n\nStatus: ${event.done ? "Done" : "In Progress"}\n\n${
         type === "Team" && event.user
           ? "Allocated To: " + event.user.username + "\n\n"
           : ""
@@ -120,6 +123,7 @@ const TaskTimeline: React.FC<TimelineProps> = ({
           events={events.filter((event) =>
             checkSameDate(new XDate(event.start), new XDate(currentDate))
           )}
+          renderEvent={(e) => <EventComponent event={e} />}
         />
       </ScrollView>
     </CalendarProvider>

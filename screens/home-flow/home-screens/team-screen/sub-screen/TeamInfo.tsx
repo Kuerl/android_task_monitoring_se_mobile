@@ -54,13 +54,21 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
 
   const addTeamMembers = async (pkTeam_Id: string, username: string) => {
     try {
-      await axios.post("/team/" + pkTeam_Id, {
+      const res = await axios.post("/team/" + pkTeam_Id, {
         username: [username],
       });
       setNewMember("");
-      loadTeamMembers(route.params);
-      setTeamInfo(getTeamInfo(route.params.pkTeam_Id, state.team));
-      Alert.alert("Your team members have been added successfully!");
+      if (res.data.addedMember.length) {
+        loadTeamMembers(route.params);
+        setTeamInfo(getTeamInfo(route.params.pkTeam_Id, state.team));
+        Alert.alert("Your team member have been added successfully!");
+      } else if (res.data.exitedMember.length) {
+        Alert.alert("This team member have already been added!");
+      } else {
+        Alert.alert(
+          "Oops! Something went wrong. This team member is not existed!"
+        );
+      }
     } catch (err) {
       console.log(err);
     }

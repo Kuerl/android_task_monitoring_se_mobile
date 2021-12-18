@@ -1,9 +1,10 @@
 import React, { useReducer, useState, useContext, useEffect } from "react";
-import { Text, StyleSheet, View, Alert } from "react-native";
+import { Text, StyleSheet, View, Alert, TouchableOpacity } from "react-native";
 
-import { Input, Button, CheckBox } from "react-native-elements";
+import { Input, Button, CheckBox, Overlay } from "react-native-elements";
 import { NewPersonalTaskType } from "../context/PersonalContext";
 import DateTimePicker from "./DateTimePicker";
+import { TriangleColorPicker } from "react-native-color-picker";
 
 import { Context as AuthContext } from "../context/AuthContext";
 import { Context as TeamContext, Member } from "../context/TeamContext";
@@ -83,19 +84,13 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
 
   // Team member for allocation in add task form
   const [teamMembers, setTeamMembers] = useState<Member[]>([]);
-
-  useEffect(() => {
-    if (teamState && type === "Team") {
-      setTeamMembers(
-        teamState.state.team.filter((team) => team.pkTeam_Id === pkTeam_Id)[0]
-          .members
-      );
-    }
-  }, [teamState]);
+  // State to handle overlay
+  const [visible, setVisible] = useState(false);
 
   // State handle form value
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [color, setColor] = useState("#add8e6");
   const [startDate, setStartDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [finishDate, setFinishDate] = useState("");
@@ -111,6 +106,19 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
     finishDateSwitch: false,
     finishTimeSwitch: false,
   });
+
+  const toggleOverlay = () => {
+    setVisible(!visible);
+  };
+
+  useEffect(() => {
+    if (teamState && type === "Team") {
+      setTeamMembers(
+        teamState.state.team.filter((team) => team.pkTeam_Id === pkTeam_Id)[0]
+          .members
+      );
+    }
+  }, [teamState]);
 
   return (
     <>
@@ -133,6 +141,30 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
         value={content}
         onChangeText={setContent}
       />
+      <View style={styles.colorContainer}>
+        <Text style={styles.txt}>Task Color:</Text>
+        <TouchableOpacity
+          style={[styles.btn, { backgroundColor: color }]}
+          onPress={toggleOverlay}
+        />
+        <Overlay
+          isVisible={visible}
+          onBackdropPress={toggleOverlay}
+          overlayStyle={styles.overlay}
+        >
+          <TriangleColorPicker
+            onColorSelected={(color) => {
+              Alert.alert("Your task color is selected", "", [
+                { text: "Ok", onPress: toggleOverlay },
+              ]);
+              setColor(color);
+            }}
+            defaultColor={color}
+            oldColor={color}
+            style={{ flex: 1 }}
+          />
+        </Overlay>
+      </View>
       {type === "Team" ? (
         <View style={styles.allocationContainer}>
           <Text style={styles.allocationLabel}>Allocated To:</Text>
@@ -202,18 +234,9 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
                 due: finishDate + " " + finishTime,
                 user: { username: user },
                 done: false,
+                color,
               },
             });
-
-//             // Reset all information
-//             setTitle("");
-//             setContent("");
-//             switchDispatch({ type: "RESET" });
-//             setStartDate("");
-//             setStartTime("");
-//             setFinishDate("");
-//             setFinishTime("");
-//             setUser("");
           }
         }}
       />
@@ -244,6 +267,27 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 20,
     paddingLeft: 15,
+  },
+  colorContainer: {
+    paddingHorizontal: 15,
+    flexDirection: "row",
+    marginBottom: 15,
+    alignItems: "center",
+  },
+  txt: {
+    fontSize: 20,
+    marginRight: 15,
+    color: "white",
+  },
+  btn: {
+    width: 50,
+    height: 30,
+    borderRadius: 10,
+  },
+  overlay: {
+    width: 400,
+    height: 400,
+    backgroundColor: "transparent",
   },
 });
 

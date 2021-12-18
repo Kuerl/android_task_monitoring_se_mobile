@@ -61,6 +61,8 @@ const personalReducer = (
             content: action.payload.content,
             start: action.payload.start,
             due: action.payload.due,
+            color: action.payload.color,
+            done: action.payload.done,
           },
         ],
       };
@@ -128,6 +130,7 @@ const loadTask = (dispatch: Dispatch<PersonalActionType>) => {
           start: task.start.slice(0, 19).replace("T", " "),
           due: task.due.slice(0, 19).replace("T", " "),
           done: task.done,
+          color: task.color,
         };
       });
       dispatch({ type: "load_task", payload: taskData });

@@ -53,6 +53,8 @@ const teamReducer = (state: TeamTaskStateType, action: TeamTaskActionType) => {
             start: action.payload.start,
             due: action.payload.due,
             user: action.payload.user,
+            done: action.payload.done,
+            color: action.payload.color,
           },
         ],
       };
@@ -120,6 +122,8 @@ const loadTask = (dispatch: Dispatch<TeamTaskActionType>) => {
           start: task.start.slice(0, 19).replace("T", " "),
           due: task.due.slice(0, 19).replace("T", " "),
           user: task.user,
+          done: task.done,
+          color: task.color,
         };
       });
       dispatch({ type: "load_task", payload: taskData });

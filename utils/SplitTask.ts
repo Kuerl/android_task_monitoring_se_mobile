@@ -22,6 +22,8 @@ export const splitTask = (taskList: any) => {
           start: splitTaskStart + " 00:00:00",
           end: splitTaskStart + " 23:59:59",
           user: val.user,
+          done: val.done,
+          color: val.color,
         };
 
         if (i == 0) {
@@ -40,6 +42,8 @@ export const splitTask = (taskList: any) => {
         title: val.title,
         summary: val.content,
         user: val.user,
+        done: val.done,
+        color: val.color,
       });
     }
     return arr;

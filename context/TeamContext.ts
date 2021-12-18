@@ -2,6 +2,7 @@ import createDataContext from "../utils/CreateDataContext";
 import axios from "../utils/AxiosBase";
 import { Dispatch } from "react";
 import * as RootNavigation from "../utils/NavigationRef";
+import { Alert } from "react-native";
 
 export type Member = {
   memberRole: "Admin" | "Member";
@@ -96,6 +97,7 @@ const createNewTeam = (dispatch: Dispatch<TeamActionType>) => {
             members: [],
           },
         });
+        Alert.alert("Your team has been created successfully!");
         RootNavigation.navigate("ManageTeam");
       } else {
         dispatch({

@@ -40,7 +40,7 @@ const CreateTeam = () => {
       <Button
         title="Create"
         onPress={() => {
-          if (name) {
+          if (name.replace(/\s/g, "")) {
             createNewTeam({ teamName: name, username: state.username });
           } else {
             Alert.alert("Please input your team name!");

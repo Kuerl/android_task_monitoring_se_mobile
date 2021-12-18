@@ -60,6 +60,7 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
       setNewMember("");
       loadTeamMembers(route.params);
       setTeamInfo(getTeamInfo(route.params.pkTeam_Id, state.team));
+      Alert.alert("Your team members have been added successfully!");
     } catch (err) {
       console.log(err);
     }
@@ -92,6 +93,7 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
                   `/team/${teamInfo.pkTeam_Id}/${authContext.state.username}/duser/${member.user.username}`
                 );
                 loadTeamMembers(route.params);
+                Alert.alert("Your team member has been deleted successfully!");
               } else {
                 Alert.alert("You cannot delete this member!");
               }
@@ -168,6 +170,7 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
               `/team/${teamInfo.pkTeam_Id}/out/${authContext.state.username}`
             );
             loadAllTeam({ username: authContext.state.username });
+            Alert.alert("You have been out of this team successfully!");
             RootNavigation.navigate("ManageTeam");
           }}
         />

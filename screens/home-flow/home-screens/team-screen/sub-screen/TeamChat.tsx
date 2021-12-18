@@ -139,15 +139,14 @@ const TeamChat: React.FC<TeamDrawerProps> = ({ route }) => {
         <TextInput style={styles.input} value={input} onChangeText={setInput} />
         <TouchableOpacity
           style={styles.btn}
+          disabled={!input.replace(/\s/g, "")}
           onPress={async () => {
             try {
-              if (input) {
-                await axios.post(
-                  `/message/${route.params.pkTeam_Id}/${state.username}`,
-                  { message: input, flag: false }
-                );
-                setInput("");
-              }
+              await axios.post(
+                `/message/${route.params.pkTeam_Id}/${state.username}`,
+                { message: input, flag: false }
+              );
+              setInput("");
             } catch (err) {
               console.log(err);
             }

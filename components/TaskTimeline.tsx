@@ -80,6 +80,7 @@ const TaskTimeline: React.FC<TimelineProps> = ({
                   break;
               }
               if (res.data.effect) {
+                Alert.alert("Your task has been deleted successfully!");
                 refresh();
               } else {
                 Alert.alert("You cannot delete this task!");

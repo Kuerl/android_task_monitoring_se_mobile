@@ -4,6 +4,7 @@ import { Dispatch } from "react";
 import * as RootNavigation from "../utils/NavigationRef";
 
 import { TaskType } from "../constants/TaskType";
+import { Alert } from "react-native";
 
 // type PersonalTaskType = {
 //   pkTask_Id: number;
@@ -95,6 +96,7 @@ const createNewTask = (dispatch: Dispatch<PersonalActionType>) => {
           type: "add_task",
           payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
         });
+        Alert.alert("Your personal task has been created successfully!");
         RootNavigation.navigate("PersonalTask");
       } else {
         dispatch({

@@ -4,6 +4,7 @@ import { Dispatch } from "react";
 import * as RootNavigation from "../utils/NavigationRef";
 
 import { TaskType } from "../constants/TaskType";
+import { Alert } from "react-native";
 
 // Declare State and Action type
 export type TeamTaskStateType = {
@@ -88,6 +89,7 @@ const createNewTask = (dispatch: Dispatch<TeamTaskActionType>) => {
           type: "add_task",
           payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
         });
+        Alert.alert("Your team task has been created successfully!");
         RootNavigation.navigate("TeamTask");
       } else {
         dispatch({

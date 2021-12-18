@@ -122,6 +122,7 @@ const loadTask = (dispatch: Dispatch<PersonalActionType>) => {
           content: task.content,
           start: task.start.slice(0, 19).replace("T", " "),
           due: task.due.slice(0, 19).replace("T", " "),
+          done: task.done,
         };
       });
       dispatch({ type: "load_task", payload: taskData });

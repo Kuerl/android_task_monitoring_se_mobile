@@ -5,4 +5,5 @@ export type TaskType = {
   start: string;
   due: string;
   user?: { username: string }; // using in TeamTask
+  done: boolean;
 };

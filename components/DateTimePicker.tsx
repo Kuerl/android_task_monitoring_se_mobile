@@ -136,7 +136,10 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
               break;
           }
         }}
-        onCancel={hideTimePicker}
+        onCancel={() => {
+          hideTimePicker();
+          switchDispatch({ type: "SWITCH_TIME", payload: name });
+        }}
       />
       {timeSwitch && !show && (
         <Text style={[styles.txt, styles.selectedTxt]}>{time}</Text>

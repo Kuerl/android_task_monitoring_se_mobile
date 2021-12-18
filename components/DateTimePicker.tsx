@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Alert } from "react-native";
 
 import { Calendar } from "react-native-calendars";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -15,6 +15,8 @@ type DateTimePickerProps = {
     timeSwitch: boolean;
     date: string;
     time: string;
+    startDate: string;
+    startTime: string;
   };
   setValue: {
     switchDispatch: React.Dispatch<SwitchAction>;
@@ -33,19 +35,31 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
   const { dateSwitch, timeSwitch, date, time } = value;
   const { switchDispatch, setDate, setTime } = setValue;
 
-  const setNewDaySelected = (date: string) => {
+  const setNewDaySelected = (date: string, startDate?: string) => {
     const markedDate = Object.assign({});
     markedDate[date] = {
       selected: true,
     };
-    setMarkedDates(markedDate);
-    setDate(date);
+    if (startDate && new Date(startDate) > new Date(date)) {
+      Alert.alert("Your finishing date must be after starting date!");
+    } else {
+      setMarkedDates(markedDate);
+      setDate(date);
+    }
   };
 
-  const handleConfirm = (selectedDate: Date) => {
+  const handleConfirm = (selectedDate: Date, startTime?: string) => {
     hideTimePicker();
     const selectedTime = selectedDate.toString().slice(16, 21);
-    setTime(selectedTime);
+
+    if (startTime && selectedTime < startTime) {
+      Alert.alert(
+        "Your finishing time must be after starting Time! Your time will be set as starting time"
+      );
+      setTime(startTime);
+    } else {
+      setTime(selectedTime);
+    }
   };
 
   const hideTimePicker = () => {
@@ -75,7 +89,14 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           markedDates={markedDates}
           enableSwipeMonths={true}
           onDayPress={(day) => {
-            setNewDaySelected(day.dateString);
+            switch (name) {
+              case "START":
+                setNewDaySelected(day.dateString);
+                break;
+              case "FINISH":
+                setNewDaySelected(day.dateString, value.startDate);
+                break;
+            }
           }}
         />
       )}
@@ -99,7 +120,22 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       <DateTimePickerModal
         isVisible={show}
         mode="time"
-        onConfirm={handleConfirm}
+        onConfirm={(val) => {
+          switch (name) {
+            case "START":
+              handleConfirm(val);
+              break;
+            case "FINISH":
+              if (value.date == value.startDate) {
+                // Pass start time for check the selected time is after or not
+                // If not after, assign startTime to selected time
+                handleConfirm(val, value.startTime);
+              } else {
+                handleConfirm(val);
+              }
+              break;
+          }
+        }}
         onCancel={hideTimePicker}
       />
       {timeSwitch && !show && (

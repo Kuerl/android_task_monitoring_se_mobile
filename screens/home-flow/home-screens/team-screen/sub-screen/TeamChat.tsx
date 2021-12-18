@@ -141,11 +141,13 @@ const TeamChat: React.FC<TeamDrawerProps> = ({ route }) => {
           style={styles.btn}
           onPress={async () => {
             try {
-              await axios.post(
-                `/message/${route.params.pkTeam_Id}/${state.username}`,
-                { message: input, flag: false }
-              );
-              setInput("");
+              if (input) {
+                await axios.post(
+                  `/message/${route.params.pkTeam_Id}/${state.username}`,
+                  { message: input, flag: false }
+                );
+                setInput("");
+              }
             } catch (err) {
               console.log(err);
             }

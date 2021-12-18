@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Alert } from "react-native";
 import { Input, Button } from "react-native-elements";
 
 import { Context as AuthContext } from "../../../../../context/AuthContext";
@@ -39,9 +39,13 @@ const CreateTeam = () => {
       />
       <Button
         title="Create"
-        onPress={() =>
-          createNewTeam({ teamName: name, username: state.username })
-        }
+        onPress={() => {
+          if (name) {
+            createNewTeam({ teamName: name, username: state.username });
+          } else {
+            Alert.alert("Please input your team name!");
+          }
+        }}
       />
     </View>
   );

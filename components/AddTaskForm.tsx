@@ -1,5 +1,5 @@
 import React, { useReducer, useState, useContext, useEffect } from "react";
-import { Text, StyleSheet, View } from "react-native";
+import { Text, StyleSheet, View, Alert } from "react-native";
 
 import { Input, Button, CheckBox } from "react-native-elements";
 import { NewPersonalTaskType } from "../context/PersonalContext";
@@ -18,8 +18,8 @@ export type SwitchState = {
 };
 
 export type SwitchAction = {
-  type: "SWITCH_DATE" | "SWITCH_TIME";
-  payload: "START" | "FINISH";
+  type: "SWITCH_DATE" | "SWITCH_TIME" | "RESET";
+  payload?: "START" | "FINISH";
 };
 
 type AddTaskFormProps = {
@@ -37,13 +37,14 @@ const reducer = (state: SwitchState, action: SwitchAction) => {
       if (action.payload === "START") {
         return state.startTimeSwitch
           ? {
-              ...state,
               startDateSwitch: false,
               startTimeSwitch: false,
+              finishTimeSwitch: false,
+              finishDateSwitch: false,
             }
           : { ...state, startDateSwitch: !state.startDateSwitch };
       } else {
-        return state.finishTimeSwitch
+        return state.finishTimeSwitch || !state.startTimeSwitch
           ? { ...state, finishDateSwitch: false, finishTimeSwitch: false }
           : { ...state, finishDateSwitch: !state.finishDateSwitch };
       }
@@ -57,6 +58,13 @@ const reducer = (state: SwitchState, action: SwitchAction) => {
           ? { ...state, finishTimeSwitch: !state.finishTimeSwitch }
           : state;
       }
+    case "RESET":
+      return {
+        startTimeSwitch: false,
+        startDateSwitch: false,
+        finishTimeSwitch: false,
+        finishDateSwitch: false,
+      };
     default:
       return state;
   }
@@ -149,6 +157,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
           timeSwitch: switchState.startTimeSwitch,
           date: startDate,
           time: startTime,
+          startDate,
+          startTime,
         }}
         setValue={{
           switchDispatch,
@@ -163,6 +173,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
           timeSwitch: switchState.finishTimeSwitch,
           date: finishDate,
           time: finishTime,
+          startDate,
+          startTime,
         }}
         setValue={{
           switchDispatch,
@@ -172,19 +184,37 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
       />
       <Button
         title="Add Task"
-        onPress={() =>
-          createNewTask({
-            username: state.username,
-            pkTeam_Id: pkTeam_Id,
-            taskData: {
-              title,
-              content,
-              start: startDate + " " + startTime,
-              due: finishDate + " " + finishTime,
-              user: user,
-            },
-          })
-        }
+        onPress={() => {
+          if (!title.replace(/\s/g, "").length) {
+            Alert.alert("You must input your task title!");
+          } else if (Object.values(switchState).includes(false)) {
+            Alert.alert("You must input your task's date and time!");
+          } else if (type == "Team" && !user.length) {
+            Alert.alert("You must allocate this task to a team's member!");
+          } else {
+            createNewTask({
+              username: state.username,
+              pkTeam_Id: pkTeam_Id,
+              taskData: {
+                title,
+                content,
+                start: startDate + " " + startTime,
+                due: finishDate + " " + finishTime,
+                user: { username: user },
+              },
+            });
+
+            // Reset all information
+            setTitle("");
+            setContent("");
+            switchDispatch({ type: "RESET" });
+            setStartDate("");
+            setStartTime("");
+            setFinishDate("");
+            setFinishTime("");
+            setUser("");
+          }
+        }}
       />
     </>
   );

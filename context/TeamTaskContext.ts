@@ -89,8 +89,12 @@ const createNewTask = (dispatch: Dispatch<TeamTaskActionType>) => {
           type: "add_task",
           payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
         });
-        Alert.alert("Your team task has been created successfully!");
-        RootNavigation.navigate("TeamTask");
+        Alert.alert("Your team task has been created successfully!", "", [
+          {
+            text: "Ok",
+            onPress: () => RootNavigation.dispatch("TeamTask"),
+          },
+        ]);
       } else {
         dispatch({
           type: "add_err",

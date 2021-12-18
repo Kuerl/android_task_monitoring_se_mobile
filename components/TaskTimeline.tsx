@@ -1,5 +1,7 @@
 import React, { useState, useCallback, useContext } from "react";
 import { ScrollView, RefreshControl, Alert } from "react-native";
+import XDate from "xdate";
+import { checkSameDate } from "../utils/CheckSameDate";
 import {
   CalendarProvider,
   ExpandableCalendar,
@@ -106,8 +108,10 @@ const TaskTimeline: React.FC<TimelineProps> = ({
 
   return (
     <CalendarProvider
+      showTodayButton
       date={currentDate}
       onDateChanged={(date: Date) => setCurrentDate(date)}
+      disabledOpacity={0.6}
     >
       <ExpandableCalendar />
       <ScrollView
@@ -118,9 +122,8 @@ const TaskTimeline: React.FC<TimelineProps> = ({
         <Timeline
           format24h={true}
           eventTapped={(e) => itemPressed(e)}
-          events={events.filter(
-            (event) =>
-              event.start.slice(0, 10) == currentDate.toISOString().slice(0, 10)
+          events={events.filter((event) =>
+            checkSameDate(new XDate(event.start), new XDate(currentDate))
           )}
           renderEvent={(e) => <EventComponent event={e} />}
         />

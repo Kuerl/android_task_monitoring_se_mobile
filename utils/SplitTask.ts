@@ -19,7 +19,7 @@ export const splitTask = (taskList: any) => {
           pkTask_Id: val.pkTask_Id,
           title: val.title,
           summary: val.content,
-          start: splitTaskStart,
+          start: splitTaskStart + " 00:00:00",
           end: splitTaskStart + " 23:59:59",
           user: val.user,
         };

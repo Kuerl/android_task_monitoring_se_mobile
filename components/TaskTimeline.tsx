@@ -74,7 +74,10 @@ const TaskTimeline: React.FC<TimelineProps> = ({
                 RootNavigation.navigate("UpdatePersonalTask", event);
                 break;
               case "Team":
-                RootNavigation.navigate("UpdateTeamTask", event);
+                RootNavigation.navigate("UpdateTeamTask", {
+                  pkTeam_Id,
+                  taskInfo: event,
+                });
                 break;
             }
           },

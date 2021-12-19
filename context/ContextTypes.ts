@@ -15,6 +15,7 @@ import {
   LoadTeamTaskType,
   NewTeamTaskType,
   TeamTaskStateType,
+  UpdateTeamTaskType,
 } from "./TeamTaskContext";
 
 export type AuthContextType = {
@@ -42,4 +43,5 @@ export type TeamTaskContextType = {
   state: TeamTaskStateType;
   createNewTask: (props: NewTeamTaskType) => void;
   loadTask: (props: LoadTeamTaskType) => void;
+  updateTask: (props: UpdateTeamTaskType) => void;
 };

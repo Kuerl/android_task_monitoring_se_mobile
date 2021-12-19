@@ -3,7 +3,7 @@ import { Text, StyleSheet } from "react-native";
 
 import { Divider } from "react-native-elements";
 
-import { TeamTabList, TeamStackList } from "./TeamFlowList";
+import { TeamTabList, TeamStackList, TeamTaskStackList } from "./TeamFlowList";
 import ManageTeam from "./sub-screen/ManageTeam";
 import TeamTaskScreen from "./sub-screen/TeamTaskScreen";
 import AddTeamTask from "./sub-screen/AddTeamTask";
@@ -24,9 +24,11 @@ import {
 
 import { Provider as TeamProvider } from "../../../../context/TeamContext";
 import { Provider as TeamTaskProvider } from "../../../../context/TeamTaskContext";
+import UpdateTeamTask from "./sub-screen/UpdateTeamTask";
 
 const TeamStack = createStackNavigator<TeamStackList>();
 const TeamDrawer = createDrawerNavigator<TeamTabList>();
+const TeamTaskStack = createStackNavigator<TeamTaskStackList>();
 
 function CustomDrawerContent(props: any) {
   return (
@@ -47,6 +49,25 @@ function CustomDrawerContent(props: any) {
 }
 
 type TeamStackProps = StackScreenProps<TeamStackList, "TeamBottomTab">;
+
+const TeamTaskComponent: React.FC<TeamStackProps> = ({ route }) => {
+  return (
+    <TeamTaskStack.Navigator initialRouteName="ViewTeamTask">
+      <TeamTaskStack.Screen
+        name="ViewTeamTask"
+        component={TeamTaskScreen}
+        options={{ headerShown: false }}
+        initialParams={route.params}
+      />
+      <TeamTaskStack.Screen
+        name="UpdateTeamTask"
+        component={UpdateTeamTask}
+        options={{ headerShown: false }}
+      />
+    </TeamTaskStack.Navigator>
+  );
+};
+
 const TeamDrawerComponent: React.FC<TeamStackProps> = ({ route }) => {
   return (
     <TeamDrawer.Navigator
@@ -58,7 +79,7 @@ const TeamDrawerComponent: React.FC<TeamStackProps> = ({ route }) => {
     >
       <TeamDrawer.Screen
         name="TeamTask"
-        component={TeamTaskScreen}
+        component={TeamTaskComponent}
         options={{ title: "View Team Tasks" }}
         initialParams={route.params}
       />

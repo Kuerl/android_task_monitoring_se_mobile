@@ -10,14 +10,20 @@ import {
 import { Picker, PickerIOS } from "@react-native-picker/picker";
 
 import { Input, Button, CheckBox, Overlay } from "react-native-elements";
-import { NewPersonalTaskType } from "../context/PersonalContext";
+import {
+  NewPersonalTaskType,
+  UpdatePersonalTask,
+} from "../context/PersonalContext";
 import DateTimePicker from "./DateTimePicker";
 import { TriangleColorPicker } from "react-native-color-picker";
 
 import { Context as AuthContext } from "../context/AuthContext";
 import { Context as TeamContext, Member } from "../context/TeamContext";
 import { AuthContextType, TeamContextType } from "../context/ContextTypes";
-import { NewTeamTaskType } from "../context/TeamTaskContext";
+import {
+  NewTeamTaskType,
+  UpdateTeamTaskType,
+} from "../context/TeamTaskContext";
 import { TaskType } from "../constants/TaskType";
 
 export type SwitchState = {
@@ -39,8 +45,8 @@ type AddTaskFormProps = {
     | ((props: NewTeamTaskType) => void);
   update?: {
     updateExistingTask:
-      | ((props: NewPersonalTaskType) => void)
-      | ((props: NewTeamTaskType) => void);
+      | ((props: UpdatePersonalTask) => void)
+      | ((props: UpdateTeamTaskType) => void);
     taskInfo?: TaskType;
   };
   pkTeam_Id?: string; // Provide this props in team task (REQUIRED)

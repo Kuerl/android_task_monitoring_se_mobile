@@ -80,8 +80,8 @@ const teamReducer = (state: TeamTaskStateType, action: TeamTaskActionType) => {
 
 const createNewTask = (dispatch: Dispatch<TeamTaskActionType>) => {
   return async ({ pkTeam_Id, taskData }: NewTeamTaskType) => {
-    try {
-      if (taskData.user) {
+    if (taskData.user) {
+      try {
         const res = await axios.post("/task/team/" + pkTeam_Id, {
           ...taskData,
           taskType: "Team",
@@ -98,15 +98,16 @@ const createNewTask = (dispatch: Dispatch<TeamTaskActionType>) => {
               onPress: () => RootNavigation.dispatch("TeamTask"),
             },
           ]);
+        } else {
+          Alert.alert("Something went wrong!");
+          dispatch({
+            type: "add_err",
+            payload: { errorMessage: "Create new team task failed" },
+          });
         }
-      } else {
-        dispatch({
-          type: "add_err",
-          payload: { errorMessage: "Create new team task failed" },
-        });
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
     }
   };
 };

@@ -106,6 +106,7 @@ const createNewTask = (dispatch: Dispatch<PersonalActionType>) => {
           },
         ]);
       } else {
+        Alert.alert("Something went wrong!");
         dispatch({
           type: "add_err",
           payload: { errorMessage: "Create new personal task failed" },

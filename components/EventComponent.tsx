@@ -10,10 +10,16 @@ const EventComponent: React.FC<EventComponentProps> = ({ event }) => {
   const [late, setLate] = useState(false);
 
   useEffect(() => {
-    if (new Date() > new Date(event.end.replace(" ", "T")) && !event.done) {
+    if (
+      event.finalDue &&
+      new Date() > new Date(event.finalDue.replace(" ", "T")) &&
+      !event.done
+    ) {
       setLate(true);
+    } else {
+      setLate(false);
     }
-  }, []);
+  }, [event]);
 
   return (
     <View>

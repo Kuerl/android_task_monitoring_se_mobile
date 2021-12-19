@@ -23,6 +23,7 @@ export type EventType = {
   user?: { username: string }; // using in TeamTask
   color?: string;
   done?: boolean;
+  finalDue?: string;
 };
 
 type TimelineProps = {
@@ -59,7 +60,7 @@ const TaskTimeline: React.FC<TimelineProps> = ({
           : ""
       }Starting Time: ${event.start} ${
         event.start.length <= 10 ? "00:00" : ""
-      }\n\nFinishing Time: ${event.end}\n`,
+      }\n\nFinishing Time: ${event.finalDue}\n`,
       [
         {
           text: "Cancel",

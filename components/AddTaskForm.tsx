@@ -1,6 +1,13 @@
 import React, { useReducer, useState, useContext, useEffect } from "react";
-import { Text, StyleSheet, View, Alert, TouchableOpacity } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import {
+  Text,
+  StyleSheet,
+  View,
+  Alert,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
+import { Picker, PickerIOS } from "@react-native-picker/picker";
 
 import { Input, Button, CheckBox, Overlay } from "react-native-elements";
 import { NewPersonalTaskType } from "../context/PersonalContext";
@@ -107,6 +114,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
 
   // State to handle user checkbox
   const [user, setUser] = useState("");
+
+  const [pkTask_Id, setPkTask_Id] = useState(0);
   const [done, setDone] = useState(false);
 
   // Reducer for handle switch
@@ -132,6 +141,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
 
   useEffect(() => {
     if (update && update.taskInfo) {
+      setPkTask_Id(update.taskInfo.pkTask_Id);
       setTitle(update.taskInfo.title);
       setContent(update.taskInfo.content);
       setStartTime(update.taskInfo.start.slice(11, 16));
@@ -200,14 +210,35 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
       {update ? (
         <View style={styles.colorContainer}>
           <Text style={styles.txt}>Status: </Text>
-          <Picker
-            selectedValue={done}
-            style={{ height: 50, width: 150 }}
-            onValueChange={(itemValue, itemIndex) => setDone(itemValue)}
-          >
-            <Picker.Item label="In Progress" value={false} />
-            <Picker.Item label="Done" value={true} />
-          </Picker>
+          {Platform.OS == "ios" ? (
+            <PickerIOS
+              selectedValue={done ? 1 : 0}
+              itemStyle={{ height: 60, width: 150 }}
+              onValueChange={(itemValue, itemIndex) => setDone(!!itemValue)}
+            >
+              <Picker.Item label="In Progress" color="red" value={0} />
+              <Picker.Item label="Done" color="green" value={1} />
+            </PickerIOS>
+          ) : (
+            <Picker
+              selectedValue={done ? 1 : 0}
+              style={{ height: 35, width: 170, color: "white" }}
+              onValueChange={(itemValue, itemIndex) => setDone(!!itemValue)}
+            >
+              <Picker.Item
+                label="In Progress"
+                style={styles.labelStatus}
+                color="red"
+                value={0}
+              />
+              <Picker.Item
+                label="Done"
+                color="green"
+                style={styles.labelStatus}
+                value={1}
+              />
+            </Picker>
+          )}
         </View>
       ) : null}
       {pkTeam_Id ? (
@@ -229,6 +260,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
       ) : null}
       <DateTimePicker
         name="START"
+        type={createNewTask ? "CREATE" : "UPDATE"}
         value={{
           dateSwitch: switchState.startDateSwitch,
           timeSwitch: switchState.startTimeSwitch,
@@ -245,6 +277,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
       />
       <DateTimePicker
         name="FINISH"
+        type={createNewTask ? "CREATE" : "UPDATE"}
         value={{
           dateSwitch: switchState.finishDateSwitch,
           timeSwitch: switchState.finishTimeSwitch,
@@ -260,7 +293,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
         }}
       />
       <Button
-        title="Add Task"
+        title={createNewTask ? "Add Task" : "Update Task"}
         onPress={() => {
           if (!title.replace(/\s/g, "").length) {
             Alert.alert("You must input your task title!");
@@ -281,6 +314,21 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
                   due: finishDate + " " + finishTime,
                   user: { username: user },
                   done: false,
+                  color,
+                },
+              });
+            } else if (update) {
+              update.updateExistingTask({
+                username: state.username,
+                pkTeam_Id: pkTeam_Id || "",
+                taskData: {
+                  pkTask_Id,
+                  title,
+                  content,
+                  start: startDate + " " + startTime,
+                  due: finishDate + " " + finishTime,
+                  user: { username: user },
+                  done,
                   color,
                 },
               });
@@ -336,6 +384,10 @@ const styles = StyleSheet.create({
     width: 400,
     height: 400,
     backgroundColor: "transparent",
+  },
+  labelStatus: {
+    fontSize: 20,
+    color: "black",
   },
 });
 

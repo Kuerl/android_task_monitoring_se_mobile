@@ -6,14 +6,6 @@ import * as RootNavigation from "../utils/NavigationRef";
 import { TaskType } from "../constants/TaskType";
 import { Alert } from "react-native";
 
-// type PersonalTaskType = {
-//   pkTask_Id: number;
-//   title: string;
-//   content: string;
-//   start: string;
-//   due: string;
-// };
-
 // Declare State and Action type
 export type PersonalStateType = {
   tasks: TaskType[];
@@ -27,6 +19,7 @@ export type PersonalActionType =
       payload: TaskType;
     }
   | { type: "load_task"; payload: TaskType[] }
+  | { type: "update_task"; payload: TaskType }
   | { type: "add_err"; payload: { errorMessage: string } }
   | { type: "clear_err" };
 
@@ -39,6 +32,11 @@ export type NewPersonalTaskType = {
 // Declare type PROPS for loadTask function
 export type LoadPersonalTaskType = {
   username: string;
+};
+
+export type UpdatePersonalTask = {
+  username: string;
+  taskData: TaskType;
 };
 
 const personalReducer = (
@@ -70,6 +68,13 @@ const personalReducer = (
       return {
         ...state,
         tasks: action.payload,
+      };
+    case "update_task":
+      return {
+        ...state,
+        tasks: state.tasks.map((task) =>
+          task.pkTask_Id === action.payload.pkTask_Id ? action.payload : task
+        ),
       };
     case "add_err":
       return {
@@ -141,8 +146,44 @@ const loadTask = (dispatch: Dispatch<PersonalActionType>) => {
   };
 };
 
+const updateTask = (dispatch: Dispatch<PersonalActionType>) => {
+  return async ({ username, taskData }: UpdatePersonalTask) => {
+    console.log(taskData);
+    try {
+      const res = await axios.put(
+        `/task/personal/${username}/${taskData.pkTask_Id}`,
+        {
+          ...taskData,
+          taskType: "Personal",
+        }
+      );
+      if (res.data.effect) {
+        dispatch({
+          type: "update_task",
+          payload: taskData,
+        });
+        Alert.alert("Your personal task has been updated successfully!", "", [
+          {
+            text: "Ok",
+            style: "default",
+            onPress: () => RootNavigation.dispatch("PersonalTask"),
+          },
+        ]);
+      } else {
+        Alert.alert("Something went wrong!");
+        dispatch({
+          type: "add_err",
+          payload: { errorMessage: "Update personal task failed" },
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
+
 export const { Provider, Context } = createDataContext(
   personalReducer,
-  { createNewTask, loadTask },
+  { createNewTask, loadTask, updateTask },
   { tasks: [], errorMessage: "" }
 );

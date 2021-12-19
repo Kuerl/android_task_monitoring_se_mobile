@@ -10,6 +10,7 @@ import { SwitchAction } from "./AddTaskForm";
 
 type DateTimePickerProps = {
   name: "START" | "FINISH";
+  type: "CREATE" | "UPDATE";
   value: {
     dateSwitch: boolean;
     timeSwitch: boolean;
@@ -27,6 +28,7 @@ type DateTimePickerProps = {
 
 const DateTimePicker: React.FC<DateTimePickerProps> = ({
   name,
+  type,
   value,
   setValue,
 }) => {
@@ -67,12 +69,14 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
   };
 
   useEffect(() => {
-    if (value.startDate) {
-      setNewDaySelected(value.startDate);
-    } else {
-      const offset = new Date().getTimezoneOffset() * 60000; // Get offset between local timezone and UTC in miliseconds
-      const today = new Date(Date.now() - offset).toISOString().split("T")[0];
-      setNewDaySelected(today);
+    if (type == "CREATE") {
+      if (value.startDate) {
+        setNewDaySelected(value.startDate);
+      } else {
+        const offset = new Date().getTimezoneOffset() * 60000; // Get offset between local timezone and UTC in miliseconds
+        const today = new Date(Date.now() - offset).toISOString().split("T")[0];
+        setNewDaySelected(today);
+      }
     }
   }, [value.startDate]);
 

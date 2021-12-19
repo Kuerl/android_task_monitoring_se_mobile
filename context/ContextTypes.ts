@@ -3,6 +3,7 @@ import {
   LoadPersonalTaskType,
   NewPersonalTaskType,
   PersonalStateType,
+  UpdatePersonalTask,
 } from "./PersonalContext";
 import {
   CreateTeamProps,
@@ -34,6 +35,7 @@ export type PersonalContextType = {
   state: PersonalStateType;
   createNewTask: (props: NewPersonalTaskType) => void;
   loadTask: (props: LoadPersonalTaskType) => void;
+  updateTask: (props: UpdatePersonalTask) => void;
 };
 
 export type TeamTaskContextType = {

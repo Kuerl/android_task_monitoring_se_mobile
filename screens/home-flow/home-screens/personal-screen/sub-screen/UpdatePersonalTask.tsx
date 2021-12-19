@@ -13,14 +13,14 @@ type PersonalTaskProps = StackScreenProps<
 >;
 
 const UpdatePersonalTask: React.FC<PersonalTaskProps> = ({ route }) => {
-  const { state, createNewTask }: PersonalContextType =
+  const { state, updateTask }: PersonalContextType =
     useContext(PersonalContext);
   return (
     <ScrollView style={styles.container}>
       <AddTaskForm
         formType="UPDATE"
         update={{
-          updateExistingTask: createNewTask,
+          updateExistingTask: updateTask,
           taskInfo: state.tasks.find(
             (task) => task.pkTask_Id == route.params.pkTask_Id
           ),

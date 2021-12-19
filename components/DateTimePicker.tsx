@@ -67,10 +67,14 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
   };
 
   useEffect(() => {
-    const offset = new Date().getTimezoneOffset() * 60000; // Get offset between local timezone and UTC in miliseconds
-    const today = new Date(Date.now() - offset).toISOString().split("T")[0];
-    setNewDaySelected(today);
-  }, []);
+    if (value.startDate) {
+      setNewDaySelected(value.startDate);
+    } else {
+      const offset = new Date().getTimezoneOffset() * 60000; // Get offset between local timezone and UTC in miliseconds
+      const today = new Date(Date.now() - offset).toISOString().split("T")[0];
+      setNewDaySelected(today);
+    }
+  }, [value.startDate]);
 
   return (
     <View style={styles.container}>

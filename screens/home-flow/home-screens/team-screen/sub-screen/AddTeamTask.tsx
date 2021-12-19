@@ -16,7 +16,7 @@ type TeamDrawerProps = DrawerScreenProps<TeamTabList, "AddTeamTask">;
 const AddTeamTask: React.FC<TeamDrawerProps> = ({ route }) => {
   const { createNewTask }: TeamTaskContextType = useContext(TeamTaskContext);
   const { loadTeamMembers }: TeamContextType = useContext(TeamContext);
-  
+
   useEffect(() => {
     loadTeamMembers(route.params);
   }, []);
@@ -24,7 +24,7 @@ const AddTeamTask: React.FC<TeamDrawerProps> = ({ route }) => {
   return (
     <ScrollView style={styles.container}>
       <AddTaskForm
-        type="Team"
+        formType="CREATE"
         createNewTask={createNewTask}
         pkTeam_Id={route.params.pkTeam_Id}
       />

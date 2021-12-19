@@ -24,11 +24,17 @@ export type SwitchAction = {
 };
 
 type AddTaskFormProps = {
-  type: "Personal" | "Team";
-  createNewTask:
+  formType: "CREATE" | "UPDATE";
+  createNewTask?:
     | ((props: NewPersonalTaskType) => void)
     | ((props: NewTeamTaskType) => void);
-  pkTeam_Id: string;
+  update?: {
+    updateExistingTask:
+      | ((props: NewPersonalTaskType) => void)
+      | ((props: NewTeamTaskType) => void);
+    pkTask_Id: string;
+  };
+  pkTeam_Id?: string; // Provide this props in team task (REQUIRED)
 };
 
 // Reducer handle the switch button for date and time
@@ -74,8 +80,9 @@ const reducer = (state: SwitchState, action: SwitchAction) => {
 // AddTaskForm will be used for both Personal and Team
 // so addTask must be assigned for suitable action
 const AddTaskForm: React.FC<AddTaskFormProps> = ({
-  type,
+  formType,
   createNewTask,
+  update,
   pkTeam_Id,
 }) => {
   // Context for action submit form
@@ -112,7 +119,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
   };
 
   useEffect(() => {
-    if (teamState && type === "Team") {
+    if (teamState && pkTeam_Id) {
       setTeamMembers(
         teamState.state.team.filter((team) => team.pkTeam_Id === pkTeam_Id)[0]
           .members
@@ -165,7 +172,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
           />
         </Overlay>
       </View>
-      {type === "Team" ? (
+      {pkTeam_Id ? (
         <View style={styles.allocationContainer}>
           <Text style={styles.allocationLabel}>Allocated To:</Text>
           {teamMembers.map((member) => {
@@ -221,22 +228,23 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
             Alert.alert("You must input your task title!");
           } else if (Object.values(switchState).includes(false)) {
             Alert.alert("You must input your task's date and time!");
-          } else if (type == "Team" && !user.length) {
+          } else if (pkTeam_Id && !user.length) {
             Alert.alert("You must allocate this task to a team's member!");
           } else {
-            createNewTask({
-              username: state.username,
-              pkTeam_Id: pkTeam_Id,
-              taskData: {
-                title,
-                content,
-                start: startDate + " " + startTime,
-                due: finishDate + " " + finishTime,
-                user: { username: user },
-                done: false,
-                color,
-              },
-            });
+            if (createNewTask)
+              createNewTask({
+                username: state.username,
+                pkTeam_Id: pkTeam_Id || "",
+                taskData: {
+                  title,
+                  content,
+                  start: startDate + " " + startTime,
+                  due: finishDate + " " + finishTime,
+                  user: { username: user },
+                  done: false,
+                  color,
+                },
+              });
           }
         }}
       />

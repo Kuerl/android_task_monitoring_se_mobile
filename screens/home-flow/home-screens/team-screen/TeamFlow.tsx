@@ -40,7 +40,7 @@ function CustomDrawerContent(props: any) {
         onPress={() => props.navigation.navigate("CreateTeam")}
       />
       <Divider style={styles.subDivider} />
-      <Text style={styles.teamName}>Software Engineer Team</Text>
+      <Text style={styles.teamName}>{props.teamName}</Text>
       <DrawerItemList {...props} />
     </DrawerContent>
   );
@@ -52,7 +52,9 @@ const TeamDrawerComponent: React.FC<TeamStackProps> = ({ route }) => {
     <TeamDrawer.Navigator
       initialRouteName="TeamTask"
       // screenOptions={{ headerShown: false }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      drawerContent={(props) => (
+        <CustomDrawerContent {...props} teamName={route.params.teamName} />
+      )}
     >
       <TeamDrawer.Screen
         name="TeamTask"

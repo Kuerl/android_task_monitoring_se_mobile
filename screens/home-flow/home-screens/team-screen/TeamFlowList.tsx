@@ -9,5 +9,5 @@ export type TeamTabList = {
 export type TeamStackList = {
   ManageTeam: undefined;
   CreateTeam: undefined;
-  TeamBottomTab: { pkTeam_Id: string };
+  TeamBottomTab: { pkTeam_Id: string; teamName: string };
 };

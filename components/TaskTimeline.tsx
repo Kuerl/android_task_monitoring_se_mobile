@@ -8,6 +8,7 @@ import {
   Timeline,
 } from "react-native-calendars";
 import EventComponent from "./EventComponent";
+import * as RootNavigation from "../utils/NavigationRef";
 
 import axios from "../utils/AxiosBase";
 import { AuthContextType } from "../context/ContextTypes";
@@ -63,6 +64,19 @@ const TaskTimeline: React.FC<TimelineProps> = ({
         {
           text: "Cancel",
           style: "cancel",
+        },
+        {
+          text: "Update",
+          onPress: () => {
+            switch (type) {
+              case "Personal":
+                RootNavigation.navigate("UpdatePersonalTask", event);
+                break;
+              case "Team":
+                RootNavigation.navigate("UpdateTeamTask", event);
+                break;
+            }
+          },
         },
         {
           text: "Delete",

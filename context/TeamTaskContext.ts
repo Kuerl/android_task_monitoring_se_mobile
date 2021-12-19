@@ -81,22 +81,24 @@ const teamReducer = (state: TeamTaskStateType, action: TeamTaskActionType) => {
 const createNewTask = (dispatch: Dispatch<TeamTaskActionType>) => {
   return async ({ pkTeam_Id, taskData }: NewTeamTaskType) => {
     try {
-      const res = await axios.post("/task/team/" + pkTeam_Id, {
-        ...taskData,
-        taskType: "Team",
-        user: "anhviet",
-      });
-      if (res.data.effect) {
-        dispatch({
-          type: "add_task",
-          payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
+      if (taskData.user) {
+        const res = await axios.post("/task/team/" + pkTeam_Id, {
+          ...taskData,
+          taskType: "Team",
+          user: taskData.user.username,
         });
-        Alert.alert("Your team task has been created successfully!", "", [
-          {
-            text: "Ok",
-            onPress: () => RootNavigation.dispatch("TeamTask"),
-          },
-        ]);
+        if (res.data.effect) {
+          dispatch({
+            type: "add_task",
+            payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
+          });
+          Alert.alert("Your team task has been created successfully!", "", [
+            {
+              text: "Ok",
+              onPress: () => RootNavigation.dispatch("TeamTask"),
+            },
+          ]);
+        }
       } else {
         dispatch({
           type: "add_err",

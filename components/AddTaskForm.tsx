@@ -1,5 +1,6 @@
 import React, { useReducer, useState, useContext, useEffect } from "react";
 import { Text, StyleSheet, View, Alert, TouchableOpacity } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 
 import { Input, Button, CheckBox, Overlay } from "react-native-elements";
 import { NewPersonalTaskType } from "../context/PersonalContext";
@@ -10,6 +11,7 @@ import { Context as AuthContext } from "../context/AuthContext";
 import { Context as TeamContext, Member } from "../context/TeamContext";
 import { AuthContextType, TeamContextType } from "../context/ContextTypes";
 import { NewTeamTaskType } from "../context/TeamTaskContext";
+import { TaskType } from "../constants/TaskType";
 
 export type SwitchState = {
   startTimeSwitch: boolean;
@@ -32,7 +34,7 @@ type AddTaskFormProps = {
     updateExistingTask:
       | ((props: NewPersonalTaskType) => void)
       | ((props: NewTeamTaskType) => void);
-    pkTask_Id: string;
+    taskInfo?: TaskType;
   };
   pkTeam_Id?: string; // Provide this props in team task (REQUIRED)
 };
@@ -105,6 +107,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
 
   // State to handle user checkbox
   const [user, setUser] = useState("");
+  const [done, setDone] = useState(false);
 
   // Reducer for handle switch
   const [switchState, switchDispatch] = useReducer(reducer, {
@@ -127,9 +130,31 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
     }
   }, [teamState]);
 
+  useEffect(() => {
+    if (update && update.taskInfo) {
+      setTitle(update.taskInfo.title);
+      setContent(update.taskInfo.content);
+      setStartTime(update.taskInfo.start.slice(11, 16));
+      setStartDate(update.taskInfo.start.slice(0, 10));
+      setFinishTime(update.taskInfo.due.slice(11, 16));
+      setFinishDate(update.taskInfo.due.slice(0, 10));
+      setDone(update.taskInfo.done);
+      setColor(update.taskInfo.color);
+      if (update.taskInfo.user) setUser(update.taskInfo.user.username);
+
+      switchDispatch({ type: "SWITCH_DATE", payload: "START" });
+      switchDispatch({ type: "SWITCH_TIME", payload: "START" });
+
+      switchDispatch({ type: "SWITCH_DATE", payload: "FINISH" });
+      switchDispatch({ type: "SWITCH_TIME", payload: "FINISH" });
+    }
+  }, []);
+
   return (
     <>
-      <Text style={styles.title}>Add New Tasks</Text>
+      <Text style={styles.title}>
+        {formType == "CREATE" ? "Add New Tasks" : "Update Task"}
+      </Text>
       <Input
         placeholder="Input Title"
         leftIcon={{ type: "feather", name: "type", color: "white" }}
@@ -172,6 +197,19 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
           />
         </Overlay>
       </View>
+      {update ? (
+        <View style={styles.colorContainer}>
+          <Text style={styles.txt}>Status: </Text>
+          <Picker
+            selectedValue={done}
+            style={{ height: 50, width: 150 }}
+            onValueChange={(itemValue, itemIndex) => setDone(itemValue)}
+          >
+            <Picker.Item label="In Progress" value={false} />
+            <Picker.Item label="Done" value={true} />
+          </Picker>
+        </View>
+      ) : null}
       {pkTeam_Id ? (
         <View style={styles.allocationContainer}>
           <Text style={styles.allocationLabel}>Allocated To:</Text>
@@ -231,11 +269,12 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
           } else if (pkTeam_Id && !user.length) {
             Alert.alert("You must allocate this task to a team's member!");
           } else {
-            if (createNewTask)
+            if (createNewTask) {
               createNewTask({
                 username: state.username,
                 pkTeam_Id: pkTeam_Id || "",
                 taskData: {
+                  // pkTask_Id: -1,
                   title,
                   content,
                   start: startDate + " " + startTime,
@@ -245,6 +284,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
                   color,
                 },
               });
+            }
           }
         }}
       />

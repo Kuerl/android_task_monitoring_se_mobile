@@ -23,8 +23,10 @@ export type RootParamsList = {
 export type RootScreensList =
   | "PersonalTask"
   | "AddPersonalTask"
+  | "UpdatePersonalTask"
   | "ManageTeam"
   | "TeamTask"
+  | "UpdateTeamTask"
   | "AddTeamTask"
   | "TeamChat"
   | "TeamInfo"

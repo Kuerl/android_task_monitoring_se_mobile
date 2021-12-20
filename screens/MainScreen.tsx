@@ -9,6 +9,7 @@ import HomeScreen from "./home-flow/HomeScreen";
 import { Context as AuthContext } from "../context/AuthContext";
 import { AuthContextType } from "../context/ContextTypes";
 import { navigationRef } from "../utils/NavigationRef";
+import LoadingComponent from "../components/Loading";
 
 const globalTheme = {
   ...DefaultTheme,
@@ -49,7 +50,10 @@ export default function MainScreen() {
         // }
         />
       ) : baseState.unsplash === true && state.authentication === true ? (
-        <HomeScreen />
+        <>
+          <HomeScreen />
+          <LoadingComponent />
+        </>
       ) : (
         <SplashScreen />
       )}

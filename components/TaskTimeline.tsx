@@ -17,6 +17,8 @@ import EventComponent from "./EventComponent";
 import AwesomeAlert from "react-native-awesome-alerts";
 import * as RootNavigation from "../utils/NavigationRef";
 
+import { wait } from "../utils/Wait";
+
 export type EventType = {
   pkTask_Id?: number;
   start: string;
@@ -33,10 +35,6 @@ type TimelineProps = {
   events: EventType[];
   refresh: () => void;
   pkTeam_Id?: string;
-};
-
-const wait = (timeout: number) => {
-  return new Promise((resolve) => setTimeout(resolve, timeout));
 };
 
 const AlertComponent: React.FC<EventType> = (props) => {

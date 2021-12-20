@@ -1,4 +1,5 @@
 import { AuthStateType, SignInProps } from "./AuthContext";
+import { LoadingStateType } from "./LoadingContext";
 import {
   LoadPersonalTaskType,
   NewPersonalTaskType,
@@ -44,4 +45,9 @@ export type TeamTaskContextType = {
   createNewTask: (props: NewTeamTaskType) => void;
   loadTask: (props: LoadTeamTaskType) => void;
   updateTask: (props: UpdateTeamTaskType) => void;
+};
+
+export type LoadingContextType = {
+  state: LoadingStateType;
+  setLoading: (props: boolean) => void;
 };

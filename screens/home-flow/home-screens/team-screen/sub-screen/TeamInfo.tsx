@@ -11,6 +11,7 @@ import {
 import { Avatar, Card, Input, Button } from "react-native-elements";
 import {
   AuthContextType,
+  LoadingContextType,
   TeamContextType,
 } from "../../../../../context/ContextTypes";
 import {
@@ -18,6 +19,7 @@ import {
   Member,
   TeamType,
 } from "../../../../../context/TeamContext";
+import { Context as LoadingContext } from "../../../../../context/LoadingContext";
 import { Context as AuthContext } from "../../../../../context/AuthContext";
 import { TeamTabList } from "../TeamFlowList";
 import { DrawerScreenProps } from "@react-navigation/drawer";
@@ -26,6 +28,7 @@ import AwesomeAlert from "react-native-awesome-alerts";
 import axios from "../../../../../utils/AxiosBase";
 import * as RootNavigation from "../../../../../utils/NavigationRef";
 import { getTeamInfo } from "../../../../../utils/getTeamInfo";
+import { wait } from "../../../../../utils/Wait";
 
 type TeamDrawerProps = DrawerScreenProps<TeamTabList, "TeamInfo">;
 
@@ -66,6 +69,8 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
   const { state, loadTeamMembers, loadAllTeam }: TeamContextType =
     useContext(TeamContext);
   const authContext: AuthContextType = useContext(AuthContext);
+  const { setLoading }: LoadingContextType = useContext(LoadingContext);
+
   const [teamInfo, setTeamInfo] = useState<TeamType>({
     teamName: "Your Team Name",
     pkTeam_Id: "",
@@ -101,22 +106,25 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
 
   const addTeamMembers = async (pkTeam_Id: string, username: string) => {
     try {
+      setLoading(true);
       const res = await axios.post("/team/" + pkTeam_Id, {
         username: [username],
       });
       setNewMember("");
-      if (res.data.addedMember.length) {
-        loadTeamMembers(route.params);
-        setTeamInfo(getTeamInfo(route.params.pkTeam_Id, state.team));
-        Alert.alert("Your team member have been added successfully!");
-      } else if (res.data.exitedMember.length) {
-        Alert.alert("This team member have already been added!");
-      } else {
-        Alert.alert(
-          "Oops! Something went wrong. This team member is not existed!"
-        );
-      }
+      wait(1500).then(() => {
+        setLoading(false);
+        if (res.data.addedMember.length) {
+          loadTeamMembers(route.params);
+          setTeamInfo(getTeamInfo(route.params.pkTeam_Id, state.team));
+          alert("Your team member have been added successfully!");
+        } else if (res.data.exitedMember.length) {
+          alert("This team member have already been added!");
+        } else {
+          alert("Oops! Something went wrong. This team member is not existed!");
+        }
+      });
     } catch (err) {
+      setLoading(false);
       console.log(err);
     }
   };
@@ -168,7 +176,7 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
                 containerStyle={styles.avatar}
                 rounded
                 title={u.user.firstName[0]}
-                onPress={() => console.log("Works!")}
+                // onPress={() => console.log("Works!")}
               />
               <Text style={styles.memberName}>
                 {u.user.firstName + " " + u.user.lastName} {" - "}
@@ -212,23 +220,37 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
                       text: "Ok",
                       style: "destructive",
                       onPress: async () => {
-                        setShowAlert(false);
-                        await axios.delete(
+                        setLoading(true);
+                        const res = await axios.delete(
                           `/team/${teamInfo.pkTeam_Id}/${authContext.state.username}/duser/${userSelected.user.username}`
                         );
-                        loadTeamMembers(route.params);
-                        Alert.alert(
-                          "Your team member has been deleted successfully!"
-                        );
+                        wait(1500).then(() => {
+                          setLoading(false);
+                          if (res.data.effect) {
+                            loadTeamMembers(route.params);
+                            Alert.alert(
+                              "Your team member has been deleted successfully!",
+                              "",
+                              [
+                                {
+                                  text: "Ok",
+                                  onPress: () => setShowAlert(false),
+                                },
+                              ]
+                            );
+                          } else {
+                            Alert.alert("Your team member deleted failed!");
+                          }
+                        });
                       },
                     },
                   ]
                 );
               } else {
-                setShowAlert(false);
                 Alert.alert("You cannot delete this member!");
               }
             } catch (err) {
+              setLoading(false);
               console.log(err);
             }
           }}
@@ -252,12 +274,25 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
                   text: "Ok",
                   style: "destructive",
                   onPress: async () => {
-                    await axios.delete(
-                      `/team/${teamInfo.pkTeam_Id}/out/${authContext.state.username}`
-                    );
-                    loadAllTeam({ username: authContext.state.username });
-                    Alert.alert("You have been out of this team successfully!");
-                    RootNavigation.navigate("ManageTeam");
+                    setLoading(true);
+                    try {
+                      const res = await axios.delete(
+                        `/team/${teamInfo.pkTeam_Id}/out/${authContext.state.username}`
+                      );
+                      wait(1500).then(() => {
+                        setLoading(false);
+                        if (res.data.effect) {
+                          loadAllTeam({ username: authContext.state.username });
+                          alert("You have been out of this team successfully!");
+                          RootNavigation.navigate("ManageTeam");
+                        } else {
+                          alert("Something went wrong!");
+                        }
+                      });
+                    } catch (err) {
+                      setLoading(false);
+                      alert("Something went wrong!");
+                    }
                   },
                 },
               ]

@@ -3,6 +3,7 @@ import axios from "../utils/AxiosBase";
 import { Dispatch } from "react";
 import * as RootNavigation from "../utils/NavigationRef";
 import { Alert } from "react-native";
+import { wait } from "../utils/Wait";
 
 export type Member = {
   memberRole: "Admin" | "Member";
@@ -35,6 +36,7 @@ type TeamActionType =
 export type CreateTeamProps = {
   teamName: string;
   username: string;
+  setLoading: (props: boolean) => void;
 };
 
 export type LoadTeamProps = {
@@ -85,27 +87,38 @@ const teamReducer = (state: TeamStateType, action: TeamActionType) => {
 };
 
 const createNewTeam = (dispatch: Dispatch<TeamActionType>) => {
-  return async ({ teamName, username }: CreateTeamProps) => {
+  return async ({ teamName, username, setLoading }: CreateTeamProps) => {
     try {
       const res = await axios.post("/team", { teamName, username });
-      if (res.data.pkTeam_Id) {
-        dispatch({
-          type: "add_team",
-          payload: {
-            teamName: res.data.teamName,
-            pkTeam_Id: res.data.pkTeam_Id,
-            members: [],
-          },
-        });
-        Alert.alert("Your team has been created successfully!");
-        RootNavigation.navigate("ManageTeam");
-      } else {
-        dispatch({
-          type: "add_err",
-          payload: { errorMessage: "Create team failed" },
-        });
-      }
+      wait(1500).then(() => {
+        if (res.data.pkTeam_Id) {
+          setLoading(false);
+
+          dispatch({
+            type: "add_team",
+            payload: {
+              teamName: res.data.teamName,
+              pkTeam_Id: res.data.pkTeam_Id,
+              members: [],
+            },
+          });
+          Alert.alert("Your team has been created successfully!", "", [
+            {
+              text: "Ok",
+              onPress: () => RootNavigation.navigate("ManageTeam"),
+            },
+          ]);
+        } else {
+          setLoading(false);
+          alert("Something went wrong!");
+          dispatch({
+            type: "add_err",
+            payload: { errorMessage: "Create team failed" },
+          });
+        }
+      });
     } catch (err) {
+      setLoading(false);
       console.log(err);
     }
   };

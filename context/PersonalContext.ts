@@ -5,6 +5,7 @@ import * as RootNavigation from "../utils/NavigationRef";
 
 import { TaskType } from "../constants/TaskType";
 import { Alert } from "react-native";
+import { wait } from "../utils/Wait";
 
 // Declare State and Action type
 export type PersonalStateType = {
@@ -27,6 +28,7 @@ export type PersonalActionType =
 export type NewPersonalTaskType = {
   username: string;
   taskData: TaskType;
+  setLoading: (props: boolean) => void;
 };
 
 // Declare type PROPS for loadTask function
@@ -37,6 +39,7 @@ export type LoadPersonalTaskType = {
 export type UpdatePersonalTask = {
   username: string;
   taskData: TaskType;
+  setLoading: (props: boolean) => void;
 };
 
 const personalReducer = (
@@ -92,32 +95,36 @@ const personalReducer = (
 };
 
 const createNewTask = (dispatch: Dispatch<PersonalActionType>) => {
-  return async ({ username, taskData }: NewPersonalTaskType) => {
+  return async ({ username, taskData, setLoading }: NewPersonalTaskType) => {
     try {
       const res = await axios.post("/task/personal/" + username, {
         ...taskData,
         taskType: "Personal",
       });
-      if (res.data.effect) {
-        dispatch({
-          type: "add_task",
-          payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
-        });
-        Alert.alert("Your personal task has been created successfully!", "", [
-          {
-            text: "Ok",
-            style: "default",
-            onPress: () => RootNavigation.dispatch("PersonalTask"),
-          },
-        ]);
-      } else {
-        Alert.alert("Something went wrong!");
-        dispatch({
-          type: "add_err",
-          payload: { errorMessage: "Create new personal task failed" },
-        });
-      }
+      wait(1500).then(() => {
+        setLoading(false);
+        if (res.data.effect) {
+          dispatch({
+            type: "add_task",
+            payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
+          });
+          Alert.alert("Your personal task has been created successfully!", "", [
+            {
+              text: "Ok",
+              style: "default",
+              onPress: () => RootNavigation.dispatch("PersonalTask"),
+            },
+          ]);
+        } else {
+          Alert.alert("Something went wrong!");
+          dispatch({
+            type: "add_err",
+            payload: { errorMessage: "Create new personal task failed" },
+          });
+        }
+      });
     } catch (err) {
+      setLoading(false);
       console.log(err);
     }
   };
@@ -147,8 +154,7 @@ const loadTask = (dispatch: Dispatch<PersonalActionType>) => {
 };
 
 const updateTask = (dispatch: Dispatch<PersonalActionType>) => {
-  return async ({ username, taskData }: UpdatePersonalTask) => {
-    console.log(taskData);
+  return async ({ username, taskData, setLoading }: UpdatePersonalTask) => {
     try {
       const res = await axios.put(
         `/task/personal/${username}/${taskData.pkTask_Id}`,
@@ -157,26 +163,30 @@ const updateTask = (dispatch: Dispatch<PersonalActionType>) => {
           taskType: "Personal",
         }
       );
-      if (res.data.effect) {
-        dispatch({
-          type: "update_task",
-          payload: taskData,
-        });
-        Alert.alert("Your personal task has been updated successfully!", "", [
-          {
-            text: "Ok",
-            style: "default",
-            onPress: () => RootNavigation.dispatch("PersonalTask"),
-          },
-        ]);
-      } else {
-        Alert.alert("Something went wrong!");
-        dispatch({
-          type: "add_err",
-          payload: { errorMessage: "Update personal task failed" },
-        });
-      }
+      wait(1500).then(() => {
+        setLoading(false);
+        if (res.data.effect) {
+          dispatch({
+            type: "update_task",
+            payload: taskData,
+          });
+          Alert.alert("Your personal task has been updated successfully!", "", [
+            {
+              text: "Ok",
+              style: "default",
+              onPress: () => RootNavigation.dispatch("PersonalTask"),
+            },
+          ]);
+        } else {
+          Alert.alert("Something went wrong!");
+          dispatch({
+            type: "add_err",
+            payload: { errorMessage: "Update personal task failed" },
+          });
+        }
+      });
     } catch (err) {
+      setLoading(false);
       console.log(err);
     }
   };

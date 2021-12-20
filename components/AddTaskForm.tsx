@@ -21,12 +21,18 @@ import * as RootNavigation from "../utils/NavigationRef";
 
 import { Context as AuthContext } from "../context/AuthContext";
 import { Context as TeamContext, Member } from "../context/TeamContext";
-import { AuthContextType, TeamContextType } from "../context/ContextTypes";
+import { Context as LoadingContext } from "../context/LoadingContext";
+import {
+  AuthContextType,
+  LoadingContextType,
+  TeamContextType,
+} from "../context/ContextTypes";
 import {
   NewTeamTaskType,
   UpdateTeamTaskType,
 } from "../context/TeamTaskContext";
 import { TaskType } from "../constants/TaskType";
+import { wait } from "../utils/Wait";
 
 export type SwitchState = {
   startTimeSwitch: boolean;
@@ -105,6 +111,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
   // Context for action submit form
   const { state }: AuthContextType = useContext(AuthContext);
   const teamState: TeamContextType = useContext(TeamContext);
+  const { setLoading }: LoadingContextType = useContext(LoadingContext);
 
   // Team member for allocation in add task form
   const [teamMembers, setTeamMembers] = useState<Member[]>([]);
@@ -311,9 +318,11 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
             Alert.alert("You must allocate this task to a team's member!");
           } else {
             if (createNewTask) {
+              setLoading(true);
               createNewTask({
                 username: state.username,
                 pkTeam_Id: pkTeam_Id || "",
+                setLoading,
                 taskData: {
                   pkTask_Id: 0, // not have yet
                   title,
@@ -326,9 +335,11 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
                 },
               });
             } else if (update) {
+              setLoading(true);
               update.updateExistingTask({
                 username: state.username,
                 pkTeam_Id: pkTeam_Id || "",
+                setLoading,
                 taskData: {
                   pkTask_Id,
                   title,
@@ -365,8 +376,9 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
                   style: "destructive",
                   onPress: async () => {
                     if (update.taskInfo) {
+                      setLoading(true);
                       try {
-                        let res;
+                        let res: any;
                         if (pkTeam_Id && update.taskInfo) {
                           res = await axios.delete(
                             `/task/team/${pkTeam_Id}/${update.taskInfo.pkTask_Id}/${state.username}`
@@ -376,29 +388,23 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
                             `/task/personal/${state.username}/${update.taskInfo.pkTask_Id}`
                           );
                         }
-                        if (res.data.effect) {
-                          Alert.alert(
-                            "Your task has been deleted successfully!",
-                            "",
-                            [
-                              {
-                                text: "Ok",
-                                onPress: () => {
-                                  if (pkTeam_Id) {
-                                    RootNavigation.dispatch("TeamTask", {
-                                      pkTeam_Id: pkTeam_Id,
-                                    });
-                                  } else {
-                                    RootNavigation.dispatch("PersonalTask");
-                                  }
-                                },
-                              },
-                            ]
-                          );
-                        } else {
-                          Alert.alert("You cannot delete this task!");
-                        }
+                        wait(1500).then(() => {
+                          setLoading(false);
+                          if (res.data.effect) {
+                            if (pkTeam_Id) {
+                              RootNavigation.dispatch("TeamTask", {
+                                pkTeam_Id: pkTeam_Id,
+                              });
+                            } else {
+                              RootNavigation.dispatch("PersonalTask");
+                            }
+                            alert("Your task has been deleted successfully!");
+                          } else {
+                            Alert.alert("You cannot delete this task!");
+                          }
+                        });
                       } catch (err) {
+                        setLoading(false);
                         console.log(err);
                       }
                     }

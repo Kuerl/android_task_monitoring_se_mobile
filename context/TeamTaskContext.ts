@@ -5,6 +5,7 @@ import * as RootNavigation from "../utils/NavigationRef";
 
 import { TaskType } from "../constants/TaskType";
 import { Alert } from "react-native";
+import { wait } from "../utils/Wait";
 
 // Declare State and Action type
 export type TeamTaskStateType = {
@@ -28,6 +29,7 @@ export type NewTeamTaskType = {
   // username: string;
   pkTeam_Id: string;
   taskData: TaskType;
+  setLoading: (props: boolean) => void;
 };
 
 // Declare type PROPS for loadTask function
@@ -40,6 +42,7 @@ export type UpdateTeamTaskType = {
   username: string;
   pkTeam_Id: string;
   taskData: TaskType;
+  setLoading: (props: boolean) => void;
 };
 
 const teamReducer = (state: TeamTaskStateType, action: TeamTaskActionType) => {
@@ -93,7 +96,7 @@ const teamReducer = (state: TeamTaskStateType, action: TeamTaskActionType) => {
 };
 
 const createNewTask = (dispatch: Dispatch<TeamTaskActionType>) => {
-  return async ({ pkTeam_Id, taskData }: NewTeamTaskType) => {
+  return async ({ pkTeam_Id, taskData, setLoading }: NewTeamTaskType) => {
     if (taskData.user) {
       try {
         const res = await axios.post("/task/team/" + pkTeam_Id, {
@@ -101,25 +104,29 @@ const createNewTask = (dispatch: Dispatch<TeamTaskActionType>) => {
           taskType: "Team",
           user: taskData.user.username,
         });
-        if (res.data.effect) {
-          dispatch({
-            type: "add_task",
-            payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
-          });
-          Alert.alert("Your team task has been created successfully!", "", [
-            {
-              text: "Ok",
-              onPress: () => RootNavigation.dispatch("TeamTask"),
-            },
-          ]);
-        } else {
-          Alert.alert("Something went wrong!");
-          dispatch({
-            type: "add_err",
-            payload: { errorMessage: "Create new team task failed" },
-          });
-        }
+        wait(1500).then(() => {
+          setLoading(false);
+          if (res.data.effect) {
+            dispatch({
+              type: "add_task",
+              payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
+            });
+            RootNavigation.dispatch("TeamTask");
+            setTimeout(() => {
+              Alert.alert("Your team task has been created successfully!");
+            }, 100);
+          } else {
+            setTimeout(() => {
+              Alert.alert("Something went wrong!");
+            }, 100);
+            dispatch({
+              type: "add_err",
+              payload: { errorMessage: "Create new team task failed" },
+            });
+          }
+        });
       } catch (err) {
+        setLoading(false);
         console.log(err);
       }
     }
@@ -151,7 +158,12 @@ const loadTask = (dispatch: Dispatch<TeamTaskActionType>) => {
 };
 
 const updateTask = (dispatch: Dispatch<TeamTaskActionType>) => {
-  return async ({ pkTeam_Id, username, taskData }: UpdateTeamTaskType) => {
+  return async ({
+    pkTeam_Id,
+    username,
+    taskData,
+    setLoading,
+  }: UpdateTeamTaskType) => {
     if (taskData.user) {
       try {
         const res = await axios.put(
@@ -162,24 +174,27 @@ const updateTask = (dispatch: Dispatch<TeamTaskActionType>) => {
             user: taskData.user.username,
           }
         );
-        if (res.data.effect) {
-          dispatch({
-            type: "update_task",
-            payload: taskData,
-          });
-          Alert.alert("Your team task has been updated successfully!", "", [
-            {
-              text: "Ok",
-              onPress: () => RootNavigation.dispatch("TeamTask"),
-            },
-          ]);
-        } else {
-          Alert.alert("Something went wrong!");
-          dispatch({
-            type: "add_err",
-            payload: { errorMessage: "Update team task failed" },
-          });
-        }
+        wait(1500).then(() => {
+          setLoading(false);
+          if (res.data.effect) {
+            dispatch({
+              type: "update_task",
+              payload: taskData,
+            });
+            RootNavigation.dispatch("TeamTask");
+            setTimeout(() => {
+              Alert.alert("Your team task has been updated successfully!");
+            }, 100);
+          } else {
+            setTimeout(() => {
+              Alert.alert("Something went wrong!");
+            }, 100);
+            dispatch({
+              type: "add_err",
+              payload: { errorMessage: "Update team task failed" },
+            });
+          }
+        });
       } catch (err) {
         console.log(err);
       }

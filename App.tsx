@@ -8,6 +8,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Provider as AuthProvider } from "./context/AuthContext";
+import { Provider as LoadingProvider } from "./context/LoadingContext";
 
 export default function App() {
   const [loaded] = useFonts({
@@ -27,9 +28,11 @@ export default function App() {
           style={globalStyles.background}
         />
         <View style={globalStyles.container}>
-          <AuthProvider>
-            <MainScreen />
-          </AuthProvider>
+          <LoadingProvider>
+            <AuthProvider>
+              <MainScreen />
+            </AuthProvider>
+          </LoadingProvider>
         </View>
       </SafeAreaProvider>
     );

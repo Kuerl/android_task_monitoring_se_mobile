@@ -24,7 +24,6 @@ const TeamTaskScreen: React.FC<TeamDrawerProps> = ({ navigation, route }) => {
       <TaskTimeline
         events={splitTask(state.tasks)}
         refresh={() => loadTask(route.params)}
-        type="Team"
         pkTeam_Id={route.params.pkTeam_Id}
       />
       <FAB

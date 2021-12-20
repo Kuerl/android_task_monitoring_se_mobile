@@ -4,8 +4,10 @@ import { Input, Button } from "react-native-elements";
 
 import { Context as AuthContext } from "../../../../../context/AuthContext";
 import { Context as TeamContext } from "../../../../../context/TeamContext";
+import { Context as LoadingContext } from "../../../../../context/LoadingContext";
 import {
   AuthContextType,
+  LoadingContextType,
   TeamContextType,
 } from "../../../../../context/ContextTypes";
 
@@ -15,6 +17,7 @@ const CreateTeam = () => {
 
   const { createNewTeam }: TeamContextType = useContext(TeamContext);
   const { state }: AuthContextType = useContext(AuthContext);
+  const { setLoading }: LoadingContextType = useContext(LoadingContext);
 
   return (
     <View style={styles.container}>
@@ -41,7 +44,12 @@ const CreateTeam = () => {
         title="Create"
         onPress={() => {
           if (name.replace(/\s/g, "")) {
-            createNewTeam({ teamName: name, username: state.username });
+            setLoading(true);
+            createNewTeam({
+              teamName: name,
+              username: state.username,
+              setLoading,
+            });
           } else {
             Alert.alert("Please input your team name!");
           }

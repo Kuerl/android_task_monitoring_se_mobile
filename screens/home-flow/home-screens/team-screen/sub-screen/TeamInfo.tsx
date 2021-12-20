@@ -1,5 +1,6 @@
 import React, { useEffect, useContext, useState } from "react";
 import {
+  View,
   Text,
   Alert,
   StyleSheet,
@@ -7,9 +8,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { Avatar, Card, Input, Button } from "react-native-elements";
+import { Avatar, Card, Input, Button, Divider } from "react-native-elements";
 import {
   AuthContextType,
+  LoadingContextType,
   TeamContextType,
 } from "../../../../../context/ContextTypes";
 import {
@@ -17,19 +19,59 @@ import {
   Member,
   TeamType,
 } from "../../../../../context/TeamContext";
+import { Context as LoadingContext } from "../../../../../context/LoadingContext";
 import { Context as AuthContext } from "../../../../../context/AuthContext";
 import { TeamTabList } from "../TeamFlowList";
 import { DrawerScreenProps } from "@react-navigation/drawer";
+import AwesomeAlert from "react-native-awesome-alerts";
+
 import axios from "../../../../../utils/AxiosBase";
 import * as RootNavigation from "../../../../../utils/NavigationRef";
 import { getTeamInfo } from "../../../../../utils/getTeamInfo";
+import { wait } from "../../../../../utils/Wait";
 
 type TeamDrawerProps = DrawerScreenProps<TeamTabList, "TeamInfo">;
+
+const AlertComponent: React.FC<Member> = (props) => {
+  return (
+    <View>
+      <Divider style={styles.divider} />
+      <View style={styles.contentContainer}>
+        <Text style={styles.labelTxt}>Member Role: </Text>
+        <Text style={styles.contentTxt}>{props.memberRole}</Text>
+      </View>
+      <View style={styles.contentContainer}>
+        <Text style={styles.labelTxt}>Description: </Text>
+        <Text style={styles.contentTxt}>
+          {props.user.description.length
+            ? props.user.description
+            : "This member does not have description"}
+        </Text>
+      </View>
+      <View style={styles.contentContainer}>
+        <Text style={styles.labelTxt}>First Name: </Text>
+        <Text style={styles.contentTxt}>{props.user.firstName}</Text>
+      </View>
+      <View style={styles.contentContainer}>
+        <Text style={styles.labelTxt}>Last Name: </Text>
+        <Text style={styles.contentTxt}>{props.user.lastName}</Text>
+      </View>
+      <View style={styles.contentContainer}>
+        <Text style={styles.labelTxt}>Account Status: </Text>
+        <Text style={styles.contentTxt}>
+          {props.user.active ? "Activating" : "Disabled"}
+        </Text>
+      </View>
+    </View>
+  );
+};
 
 const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
   const { state, loadTeamMembers, loadAllTeam }: TeamContextType =
     useContext(TeamContext);
   const authContext: AuthContextType = useContext(AuthContext);
+  const { setLoading }: LoadingContextType = useContext(LoadingContext);
+
   const [teamInfo, setTeamInfo] = useState<TeamType>({
     teamName: "Your Team Name",
     pkTeam_Id: "",
@@ -37,6 +79,17 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
   });
   const [manager, setManager] = useState("");
   const [newMember, setNewMember] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [userSelected, setUserSelected] = useState<Member>({
+    memberRole: "Member",
+    user: {
+      username: "",
+      firstName: "",
+      lastName: "",
+      description: "",
+      active: false,
+    },
+  });
 
   useEffect(() => {
     loadTeamMembers(route.params);
@@ -54,65 +107,40 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
 
   const addTeamMembers = async (pkTeam_Id: string, username: string) => {
     try {
+      setLoading(true);
       const res = await axios.post("/team/" + pkTeam_Id, {
         username: [username],
       });
-      setNewMember("");
-      if (res.data.addedMember.length) {
-        loadTeamMembers(route.params);
-        setTeamInfo(getTeamInfo(route.params.pkTeam_Id, state.team));
-        Alert.alert("Your team member have been added successfully!");
-      } else if (res.data.exitedMember.length) {
-        Alert.alert("This team member have already been added!");
-      } else {
-        Alert.alert(
-          "Oops! Something went wrong. This team member is not existed!"
-        );
-      }
+      wait(1500).then(() => {
+        setLoading(false);
+        if (res.data.addedMember.length) {
+          loadTeamMembers(route.params);
+          setTeamInfo(getTeamInfo(route.params.pkTeam_Id, state.team));
+          setTimeout(() => {
+            Alert.alert("Your team member has been added successfully!");
+          }, 100);
+        } else if (res.data.exitedMember.length) {
+          setTimeout(() => {
+            Alert.alert("This user has already been existing!");
+          }, 100);
+        } else {
+          setTimeout(() => {
+            Alert.alert(
+              "Oops! Something went wrong. This user is not existed!"
+            );
+          }, 100);
+        }
+        setNewMember("");
+      });
     } catch (err) {
+      setLoading(false);
       console.log(err);
     }
   };
 
   const memberPressed = (member: Member) => {
-    Alert.alert(
-      member.user.username,
-      `Description: ${
-        member.user.description.length
-          ? member.user.description
-          : "This member does not have description"
-      }\nFirst Name: ${member.user.firstName}\nLast Name: ${
-        member.user.lastName
-      }\nRole: ${member.memberRole}\nActive: ${member.user.active}`,
-      [
-        {
-          text: "Ok",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          onPress: async () => {
-            try {
-              if (
-                manager === authContext.state.username &&
-                manager !== member.user.username
-              ) {
-                await axios.delete(
-                  `/team/${teamInfo.pkTeam_Id}/${authContext.state.username}/duser/${member.user.username}`
-                );
-                loadTeamMembers(route.params);
-                Alert.alert("Your team member has been deleted successfully!");
-              } else {
-                Alert.alert("You cannot delete this member!");
-              }
-            } catch (err) {
-              console.log(err);
-            }
-          },
-          style: "destructive",
-        },
-      ]
-    );
+    setUserSelected(member);
+    setShowAlert(true);
   };
 
   return (
@@ -157,7 +185,7 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
                 containerStyle={styles.avatar}
                 rounded
                 title={u.user.firstName[0]}
-                onPress={() => console.log("Works!")}
+                // onPress={() => console.log("Works!")}
               />
               <Text style={styles.memberName}>
                 {u.user.firstName + " " + u.user.lastName} {" - "}
@@ -167,19 +195,130 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
             </TouchableOpacity>
           );
         })}
+        <AwesomeAlert
+          show={showAlert}
+          showProgress={false}
+          title={userSelected.user.username}
+          titleStyle={{ fontWeight: "bold", fontSize: 28 }}
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={true}
+          showConfirmButton={true}
+          customView={<AlertComponent {...userSelected} />}
+          cancelText="Cancel"
+          confirmText="Delete User"
+          confirmButtonColor="red"
+          onCancelPressed={() => {
+            setShowAlert(false);
+          }}
+          onConfirmPressed={() => {
+            try {
+              if (
+                manager === authContext.state.username &&
+                manager !== userSelected.user.username
+              ) {
+                Alert.alert(
+                  "Are you sure?",
+                  "Your team member will be deleted and can be added again later",
+                  [
+                    {
+                      text: "Cancel",
+                      style: "cancel",
+                    },
+                    {
+                      text: "Ok",
+                      style: "destructive",
+                      onPress: () => {
+                        setShowAlert(false);
+                        setTimeout(async () => {
+                          setLoading(true);
+                          const res = await axios.delete(
+                            `/team/${teamInfo.pkTeam_Id}/${authContext.state.username}/duser/${userSelected.user.username}`
+                          );
+                          wait(1500).then(() => {
+                            setLoading(false);
+                            if (res.data.effect) {
+                              loadTeamMembers(route.params);
+                              setTimeout(() => {
+                                Alert.alert(
+                                  "Your team member has been deleted successfully!",
+                                  "",
+                                  [
+                                    {
+                                      text: "Ok",
+                                      onPress: () => setShowAlert(false),
+                                    },
+                                  ]
+                                );
+                              }, 100);
+                            } else {
+                              setTimeout(() => {
+                                Alert.alert("Your team member deleted failed!");
+                              }, 100);
+                            }
+                          });
+                        }, 100);
+                      },
+                    },
+                  ]
+                );
+              } else {
+                Alert.alert("You cannot delete this member!");
+              }
+            } catch (err) {
+              setLoading(false);
+              console.log(err);
+            }
+          }}
+        />
       </Card>
       {manager && manager !== authContext.state.username ? (
         <Button
           type="solid"
           title="Out Team"
           buttonStyle={styles.btn}
-          onPress={async () => {
-            await axios.delete(
-              `/team/${teamInfo.pkTeam_Id}/out/${authContext.state.username}`
+          onPress={() => {
+            Alert.alert(
+              "Are you sure?",
+              "You cannot join again. Please contact your manager if you want to do this!",
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "Ok",
+                  style: "destructive",
+                  onPress: async () => {
+                    setLoading(true);
+                    try {
+                      const res = await axios.delete(
+                        `/team/${teamInfo.pkTeam_Id}/out/${authContext.state.username}`
+                      );
+                      wait(1500).then(() => {
+                        setLoading(false);
+                        if (res.data.effect) {
+                          loadAllTeam({ username: authContext.state.username });
+                          RootNavigation.navigate("ManageTeam");
+                          setTimeout(() => {
+                            Alert.alert("You have lef this team successfully!");
+                          }, 100);
+                        } else {
+                          setTimeout(() => {
+                            Alert.alert("Something went wrong!");
+                          }, 100);
+                        }
+                      });
+                    } catch (err) {
+                      setLoading(false);
+                      setTimeout(() => {
+                        Alert.alert("Something went wrong!");
+                      }, 100);
+                    }
+                  },
+                },
+              ]
             );
-            loadAllTeam({ username: authContext.state.username });
-            Alert.alert("You have been out of this team successfully!");
-            RootNavigation.navigate("ManageTeam");
           }}
         />
       ) : null}
@@ -230,6 +369,23 @@ const styles = StyleSheet.create({
   btn: {
     marginTop: 30,
     marginHorizontal: 10,
+  },
+  contentContainer: {
+    flexDirection: "row",
+    marginBottom: 10,
+    width: "75%",
+    justifyContent: "flex-start",
+  },
+  labelTxt: {
+    fontWeight: "bold",
+    marginRight: 10,
+  },
+  contentTxt: {
+    fontStyle: "italic",
+    textAlign: "left",
+  },
+  divider: {
+    marginBottom: 15,
   },
 });
 

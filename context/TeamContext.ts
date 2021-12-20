@@ -91,9 +91,8 @@ const createNewTeam = (dispatch: Dispatch<TeamActionType>) => {
     try {
       const res = await axios.post("/team", { teamName, username });
       wait(1500).then(() => {
+        setLoading(false);
         if (res.data.pkTeam_Id) {
-          setLoading(false);
-
           dispatch({
             type: "add_team",
             payload: {
@@ -102,15 +101,14 @@ const createNewTeam = (dispatch: Dispatch<TeamActionType>) => {
               members: [],
             },
           });
-          Alert.alert("Your team has been created successfully!", "", [
-            {
-              text: "Ok",
-              onPress: () => RootNavigation.navigate("ManageTeam"),
-            },
-          ]);
+          RootNavigation.navigate("ManageTeam");
+          setTimeout(() => {
+            Alert.alert("Your team has been created successfully!");
+          }, 100);
         } else {
-          setLoading(false);
-          alert("Something went wrong!");
+          setTimeout(() => {
+            Alert.alert("Something went wrong!");
+          }, 100);
           dispatch({
             type: "add_err",
             payload: { errorMessage: "Create team failed" },

@@ -18,6 +18,7 @@ import AwesomeAlert from "react-native-awesome-alerts";
 import * as RootNavigation from "../utils/NavigationRef";
 
 import { wait } from "../utils/Wait";
+import { Divider } from "react-native-elements";
 
 export type EventType = {
   pkTask_Id?: number;
@@ -40,6 +41,7 @@ type TimelineProps = {
 const AlertComponent: React.FC<EventType> = (props) => {
   return (
     <View>
+      <Divider style={styles.divider} />
       <View style={styles.contentContainer}>
         <Text style={styles.labelTxt}>Summary: </Text>
         <Text style={styles.contentTxt}>
@@ -181,6 +183,9 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     textAlign: "left",
   },
+  divider: {
+    marginBottom: 15,
+  }
 });
 
 export default TaskTimeline;

@@ -111,14 +111,14 @@ const createNewTask = (dispatch: Dispatch<TeamTaskActionType>) => {
               type: "add_task",
               payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
             });
-            Alert.alert("Your team task has been created successfully!", "", [
-              {
-                text: "Ok",
-                onPress: () => RootNavigation.dispatch("TeamTask"),
-              },
-            ]);
+            RootNavigation.dispatch("TeamTask");
+            setTimeout(() => {
+              Alert.alert("Your team task has been created successfully!");
+            }, 100);
           } else {
-            Alert.alert("Something went wrong!");
+            setTimeout(() => {
+              Alert.alert("Something went wrong!");
+            }, 100);
             dispatch({
               type: "add_err",
               payload: { errorMessage: "Create new team task failed" },
@@ -181,14 +181,14 @@ const updateTask = (dispatch: Dispatch<TeamTaskActionType>) => {
               type: "update_task",
               payload: taskData,
             });
-            Alert.alert("Your team task has been updated successfully!", "", [
-              {
-                text: "Ok",
-                onPress: () => RootNavigation.dispatch("TeamTask"),
-              },
-            ]);
+            RootNavigation.dispatch("TeamTask");
+            setTimeout(() => {
+              Alert.alert("Your team task has been updated successfully!");
+            }, 100);
           } else {
-            Alert.alert("Something went wrong!");
+            setTimeout(() => {
+              Alert.alert("Something went wrong!");
+            }, 100);
             dispatch({
               type: "add_err",
               payload: { errorMessage: "Update team task failed" },

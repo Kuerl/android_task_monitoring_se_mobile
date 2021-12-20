@@ -108,19 +108,18 @@ const createNewTask = (dispatch: Dispatch<PersonalActionType>) => {
             type: "add_task",
             payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
           });
-          Alert.alert("Your personal task has been created successfully!", "", [
-            {
-              text: "Ok",
-              style: "default",
-              onPress: () => RootNavigation.dispatch("PersonalTask"),
-            },
-          ]);
+          RootNavigation.dispatch("PersonalTask");
+          setTimeout(() => {
+            Alert.alert("Your personal task has been created successfully!");
+          }, 100);
         } else {
-          Alert.alert("Something went wrong!");
-          dispatch({
-            type: "add_err",
-            payload: { errorMessage: "Create new personal task failed" },
-          });
+          setTimeout(() => {
+            Alert.alert("Something went wrong!");
+            dispatch({
+              type: "add_err",
+              payload: { errorMessage: "Create new personal task failed" },
+            });
+          }, 100);
         }
       });
     } catch (err) {
@@ -170,15 +169,14 @@ const updateTask = (dispatch: Dispatch<PersonalActionType>) => {
             type: "update_task",
             payload: taskData,
           });
-          Alert.alert("Your personal task has been updated successfully!", "", [
-            {
-              text: "Ok",
-              style: "default",
-              onPress: () => RootNavigation.dispatch("PersonalTask"),
-            },
-          ]);
+          RootNavigation.dispatch("PersonalTask");
+          setTimeout(() => {
+            Alert.alert("Your personal task has been updated successfully!");
+          }, 100);
         } else {
-          Alert.alert("Something went wrong!");
+          setTimeout(() => {
+            Alert.alert("Something went wrong!");
+          }, 100);
           dispatch({
             type: "add_err",
             payload: { errorMessage: "Update personal task failed" },

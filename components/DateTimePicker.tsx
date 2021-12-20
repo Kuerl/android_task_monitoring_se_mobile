@@ -55,18 +55,13 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     const selectedTime = selectedDate.toString().slice(16, 21);
 
     if (startTime && selectedTime < startTime) {
-      Alert.alert(
-        "Your finishing time must be after starting Time!",
-        "Your time will be set as starting time",
-        [
-          {
-            text: "Ok",
-            onPress: () => {
-              setTime(startTime);
-            },
-          },
-        ]
-      );
+      setTime(startTime);
+      setTimeout(() => {
+        Alert.alert(
+          "Your finishing time must be after starting Time!",
+          "Your time will be set as starting time"
+        );
+      }, 500);
     } else {
       setTime(selectedTime);
     }

@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { Avatar, Card, Input, Button } from "react-native-elements";
+import { Avatar, Card, Input, Button, Divider } from "react-native-elements";
 import {
   AuthContextType,
   LoadingContextType,
@@ -35,6 +35,7 @@ type TeamDrawerProps = DrawerScreenProps<TeamTabList, "TeamInfo">;
 const AlertComponent: React.FC<Member> = (props) => {
   return (
     <View>
+      <Divider style={styles.divider} />
       <View style={styles.contentContainer}>
         <Text style={styles.labelTxt}>Member Role: </Text>
         <Text style={styles.contentTxt}>{props.memberRole}</Text>
@@ -110,18 +111,26 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
       const res = await axios.post("/team/" + pkTeam_Id, {
         username: [username],
       });
-      setNewMember("");
       wait(1500).then(() => {
         setLoading(false);
         if (res.data.addedMember.length) {
           loadTeamMembers(route.params);
           setTeamInfo(getTeamInfo(route.params.pkTeam_Id, state.team));
-          alert("Your team member have been added successfully!");
+          setTimeout(() => {
+            Alert.alert("Your team member has been added successfully!");
+          }, 100);
         } else if (res.data.exitedMember.length) {
-          alert("This team member have already been added!");
+          setTimeout(() => {
+            Alert.alert("This user has already been existing!");
+          }, 100);
         } else {
-          alert("Oops! Something went wrong. This team member is not existed!");
+          setTimeout(() => {
+            Alert.alert(
+              "Oops! Something went wrong. This user is not existed!"
+            );
+          }, 100);
         }
+        setNewMember("");
       });
     } catch (err) {
       setLoading(false);
@@ -219,29 +228,36 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
                     {
                       text: "Ok",
                       style: "destructive",
-                      onPress: async () => {
-                        setLoading(true);
-                        const res = await axios.delete(
-                          `/team/${teamInfo.pkTeam_Id}/${authContext.state.username}/duser/${userSelected.user.username}`
-                        );
-                        wait(1500).then(() => {
-                          setLoading(false);
-                          if (res.data.effect) {
-                            loadTeamMembers(route.params);
-                            Alert.alert(
-                              "Your team member has been deleted successfully!",
-                              "",
-                              [
-                                {
-                                  text: "Ok",
-                                  onPress: () => setShowAlert(false),
-                                },
-                              ]
-                            );
-                          } else {
-                            Alert.alert("Your team member deleted failed!");
-                          }
-                        });
+                      onPress: () => {
+                        setShowAlert(false);
+                        setTimeout(async () => {
+                          setLoading(true);
+                          const res = await axios.delete(
+                            `/team/${teamInfo.pkTeam_Id}/${authContext.state.username}/duser/${userSelected.user.username}`
+                          );
+                          wait(1500).then(() => {
+                            setLoading(false);
+                            if (res.data.effect) {
+                              loadTeamMembers(route.params);
+                              setTimeout(() => {
+                                Alert.alert(
+                                  "Your team member has been deleted successfully!",
+                                  "",
+                                  [
+                                    {
+                                      text: "Ok",
+                                      onPress: () => setShowAlert(false),
+                                    },
+                                  ]
+                                );
+                              }, 100);
+                            } else {
+                              setTimeout(() => {
+                                Alert.alert("Your team member deleted failed!");
+                              }, 100);
+                            }
+                          });
+                        }, 100);
                       },
                     },
                   ]
@@ -283,15 +299,21 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
                         setLoading(false);
                         if (res.data.effect) {
                           loadAllTeam({ username: authContext.state.username });
-                          alert("You have been out of this team successfully!");
                           RootNavigation.navigate("ManageTeam");
+                          setTimeout(() => {
+                            Alert.alert("You have lef this team successfully!");
+                          }, 100);
                         } else {
-                          alert("Something went wrong!");
+                          setTimeout(() => {
+                            Alert.alert("Something went wrong!");
+                          }, 100);
                         }
                       });
                     } catch (err) {
                       setLoading(false);
-                      alert("Something went wrong!");
+                      setTimeout(() => {
+                        Alert.alert("Something went wrong!");
+                      }, 100);
                     }
                   },
                 },
@@ -361,6 +383,9 @@ const styles = StyleSheet.create({
   contentTxt: {
     fontStyle: "italic",
     textAlign: "left",
+  },
+  divider: {
+    marginBottom: 15,
   },
 });
 

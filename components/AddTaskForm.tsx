@@ -398,9 +398,15 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
                             } else {
                               RootNavigation.dispatch("PersonalTask");
                             }
-                            alert("Your task has been deleted successfully!");
+                            setTimeout(() => {
+                              Alert.alert(
+                                "Your task has been deleted successfully!"
+                              );
+                            }, 100);
                           } else {
-                            Alert.alert("You cannot delete this task!");
+                            setTimeout(() => {
+                              Alert.alert("You cannot delete this task!");
+                            }, 100);
                           }
                         });
                       } catch (err) {

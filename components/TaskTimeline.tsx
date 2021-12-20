@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexDirection: "row",
     marginBottom: 10,
-    width: "100%",
+    width: "80%",
     justifyContent: "flex-start",
   },
   labelTxt: {

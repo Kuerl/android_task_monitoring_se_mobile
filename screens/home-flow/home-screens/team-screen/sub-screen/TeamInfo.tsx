@@ -1,5 +1,6 @@
 import React, { useEffect, useContext, useState } from "react";
 import {
+  View,
   Text,
   Alert,
   StyleSheet,
@@ -20,11 +21,46 @@ import {
 import { Context as AuthContext } from "../../../../../context/AuthContext";
 import { TeamTabList } from "../TeamFlowList";
 import { DrawerScreenProps } from "@react-navigation/drawer";
+import AwesomeAlert from "react-native-awesome-alerts";
+
 import axios from "../../../../../utils/AxiosBase";
 import * as RootNavigation from "../../../../../utils/NavigationRef";
 import { getTeamInfo } from "../../../../../utils/getTeamInfo";
 
 type TeamDrawerProps = DrawerScreenProps<TeamTabList, "TeamInfo">;
+
+const AlertComponent: React.FC<Member> = (props) => {
+  return (
+    <View>
+      <View style={styles.contentContainer}>
+        <Text style={styles.labelTxt}>Member Role: </Text>
+        <Text style={styles.contentTxt}>{props.memberRole}</Text>
+      </View>
+      <View style={styles.contentContainer}>
+        <Text style={styles.labelTxt}>Description: </Text>
+        <Text style={styles.contentTxt}>
+          {props.user.description.length
+            ? props.user.description
+            : "This member does not have description"}
+        </Text>
+      </View>
+      <View style={styles.contentContainer}>
+        <Text style={styles.labelTxt}>First Name: </Text>
+        <Text style={styles.contentTxt}>{props.user.firstName}</Text>
+      </View>
+      <View style={styles.contentContainer}>
+        <Text style={styles.labelTxt}>Last Name: </Text>
+        <Text style={styles.contentTxt}>{props.user.lastName}</Text>
+      </View>
+      <View style={styles.contentContainer}>
+        <Text style={styles.labelTxt}>Account Status: </Text>
+        <Text style={styles.contentTxt}>
+          {props.user.active ? "Activating" : "Disabled"}
+        </Text>
+      </View>
+    </View>
+  );
+};
 
 const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
   const { state, loadTeamMembers, loadAllTeam }: TeamContextType =
@@ -37,6 +73,17 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
   });
   const [manager, setManager] = useState("");
   const [newMember, setNewMember] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [userSelected, setUserSelected] = useState<Member>({
+    memberRole: "Member",
+    user: {
+      username: "",
+      firstName: "",
+      lastName: "",
+      description: "",
+      active: false,
+    },
+  });
 
   useEffect(() => {
     loadTeamMembers(route.params);
@@ -75,44 +122,8 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
   };
 
   const memberPressed = (member: Member) => {
-    Alert.alert(
-      member.user.username,
-      `Description: ${
-        member.user.description.length
-          ? member.user.description
-          : "This member does not have description"
-      }\nFirst Name: ${member.user.firstName}\nLast Name: ${
-        member.user.lastName
-      }\nRole: ${member.memberRole}\nActive: ${member.user.active}`,
-      [
-        {
-          text: "Ok",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          onPress: async () => {
-            try {
-              if (
-                manager === authContext.state.username &&
-                manager !== member.user.username
-              ) {
-                await axios.delete(
-                  `/team/${teamInfo.pkTeam_Id}/${authContext.state.username}/duser/${member.user.username}`
-                );
-                loadTeamMembers(route.params);
-                Alert.alert("Your team member has been deleted successfully!");
-              } else {
-                Alert.alert("You cannot delete this member!");
-              }
-            } catch (err) {
-              console.log(err);
-            }
-          },
-          style: "destructive",
-        },
-      ]
-    );
+    setUserSelected(member);
+    setShowAlert(true);
   };
 
   return (
@@ -167,19 +178,90 @@ const TeamInfo: React.FC<TeamDrawerProps> = ({ route }) => {
             </TouchableOpacity>
           );
         })}
+        <AwesomeAlert
+          show={showAlert}
+          showProgress={false}
+          title={userSelected.user.username}
+          titleStyle={{ fontWeight: "bold", fontSize: 28 }}
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={true}
+          showConfirmButton={true}
+          customView={<AlertComponent {...userSelected} />}
+          cancelText="Cancel"
+          confirmText="Delete User"
+          confirmButtonColor="red"
+          onCancelPressed={() => {
+            setShowAlert(false);
+          }}
+          onConfirmPressed={() => {
+            try {
+              if (
+                manager === authContext.state.username &&
+                manager !== userSelected.user.username
+              ) {
+                Alert.alert(
+                  "Are you sure?",
+                  "Your team member will be deleted and can be added again later",
+                  [
+                    {
+                      text: "Cancel",
+                      style: "cancel",
+                    },
+                    {
+                      text: "Ok",
+                      style: "destructive",
+                      onPress: async () => {
+                        setShowAlert(false);
+                        await axios.delete(
+                          `/team/${teamInfo.pkTeam_Id}/${authContext.state.username}/duser/${userSelected.user.username}`
+                        );
+                        loadTeamMembers(route.params);
+                        Alert.alert(
+                          "Your team member has been deleted successfully!"
+                        );
+                      },
+                    },
+                  ]
+                );
+              } else {
+                setShowAlert(false);
+                Alert.alert("You cannot delete this member!");
+              }
+            } catch (err) {
+              console.log(err);
+            }
+          }}
+        />
       </Card>
       {manager && manager !== authContext.state.username ? (
         <Button
           type="solid"
           title="Out Team"
           buttonStyle={styles.btn}
-          onPress={async () => {
-            await axios.delete(
-              `/team/${teamInfo.pkTeam_Id}/out/${authContext.state.username}`
+          onPress={() => {
+            Alert.alert(
+              "Are you sure?",
+              "You cannot join again. Please contact your manager if you want to do this!",
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "Ok",
+                  style: "destructive",
+                  onPress: async () => {
+                    await axios.delete(
+                      `/team/${teamInfo.pkTeam_Id}/out/${authContext.state.username}`
+                    );
+                    loadAllTeam({ username: authContext.state.username });
+                    Alert.alert("You have been out of this team successfully!");
+                    RootNavigation.navigate("ManageTeam");
+                  },
+                },
+              ]
             );
-            loadAllTeam({ username: authContext.state.username });
-            Alert.alert("You have been out of this team successfully!");
-            RootNavigation.navigate("ManageTeam");
           }}
         />
       ) : null}
@@ -230,6 +312,20 @@ const styles = StyleSheet.create({
   btn: {
     marginTop: 30,
     marginHorizontal: 10,
+  },
+  contentContainer: {
+    flexDirection: "row",
+    marginBottom: 10,
+    width: "75%",
+    justifyContent: "flex-start",
+  },
+  labelTxt: {
+    fontWeight: "bold",
+    marginRight: 10,
+  },
+  contentTxt: {
+    fontStyle: "italic",
+    textAlign: "left",
   },
 });
 

@@ -357,6 +357,10 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
               "This action will delete your task permanently!",
               [
                 {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
                   text: "Yes",
                   style: "destructive",
                   onPress: async () => {
@@ -399,10 +403,6 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
                       }
                     }
                   },
-                },
-                {
-                  text: "Cancel",
-                  style: "cancel",
                 },
               ]
             );

@@ -56,9 +56,17 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
 
     if (startTime && selectedTime < startTime) {
       Alert.alert(
-        "Your finishing time must be after starting Time! Your time will be set as starting time"
+        "Your finishing time must be after starting Time!",
+        "Your time will be set as starting time",
+        [
+          {
+            text: "Ok",
+            onPress: () => {
+              setTime(startTime);
+            },
+          },
+        ]
       );
-      setTime(startTime);
     } else {
       setTime(selectedTime);
     }
@@ -69,16 +77,18 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
   };
 
   useEffect(() => {
-    if (type == "CREATE") {
-      if (value.startDate) {
+    if (!dateSwitch) {
+      setDate("");
+    } else {
+      if (value.startDate && !value.date) {
         setNewDaySelected(value.startDate);
-      } else {
+      } else if (!value.startDate && !value.date) {
         const offset = new Date().getTimezoneOffset() * 60000; // Get offset between local timezone and UTC in miliseconds
         const today = new Date(Date.now() - offset).toISOString().split("T")[0];
         setNewDaySelected(today);
       }
     }
-  }, [value.startDate]);
+  }, [dateSwitch]);
 
   return (
     <View style={styles.container}>

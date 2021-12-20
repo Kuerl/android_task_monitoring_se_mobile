@@ -61,6 +61,7 @@ const ManageTeam: React.FC<TeamStackProps> = ({ navigation }) => {
                 onPress={() =>
                   navigation.navigate("TeamBottomTab", {
                     pkTeam_Id: item.pkTeam_Id,
+                    teamName: item.teamName,
                   })
                 }
               >

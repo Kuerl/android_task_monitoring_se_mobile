@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useContext } from "react";
+import React, { useState, useCallback } from "react";
 import { ScrollView, RefreshControl, Alert } from "react-native";
 import XDate from "xdate";
 import { checkSameDate } from "../utils/CheckSameDate";
@@ -8,10 +8,7 @@ import {
   Timeline,
 } from "react-native-calendars";
 import EventComponent from "./EventComponent";
-
-import axios from "../utils/AxiosBase";
-import { AuthContextType } from "../context/ContextTypes";
-import { Context as AuthContext } from "../context/AuthContext";
+import * as RootNavigation from "../utils/NavigationRef";
 
 export type EventType = {
   pkTask_Id?: number;
@@ -22,6 +19,7 @@ export type EventType = {
   user?: { username: string }; // using in TeamTask
   color?: string;
   done?: boolean;
+  finalDue?: string;
 };
 
 type TimelineProps = {
@@ -41,7 +39,6 @@ const TaskTimeline: React.FC<TimelineProps> = ({
   type,
   pkTeam_Id,
 }) => {
-  const { state }: AuthContextType = useContext(AuthContext);
   const [refreshing, setRefreshing] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -58,41 +55,27 @@ const TaskTimeline: React.FC<TimelineProps> = ({
           : ""
       }Starting Time: ${event.start} ${
         event.start.length <= 10 ? "00:00" : ""
-      }\n\nFinishing Time: ${event.end}\n`,
+      }\n\nFinishing Time: ${event.finalDue}\n`,
       [
         {
           text: "Cancel",
           style: "cancel",
         },
         {
-          text: "Delete",
-          onPress: async () => {
-            try {
-              let res;
-              switch (type) {
-                case "Personal":
-                  res = await axios.delete(
-                    `/task/personal/${state.username}/${event.pkTask_Id}`
-                  );
-                  break;
-                case "Team":
-                  res = await axios.delete(
-                    `/task/team/${pkTeam_Id}/${event.pkTask_Id}/${state.username}`
-                  );
-                  console.log(res.data);
-                  break;
-              }
-              if (res.data.effect) {
-                Alert.alert("Your task has been deleted successfully!");
-                refresh();
-              } else {
-                Alert.alert("You cannot delete this task!");
-              }
-            } catch (err) {
-              console.log(err);
+          text: "Update",
+          onPress: () => {
+            switch (type) {
+              case "Personal":
+                RootNavigation.navigate("UpdatePersonalTask", event);
+                break;
+              case "Team":
+                RootNavigation.navigate("UpdateTeamTask", {
+                  pkTeam_Id,
+                  taskInfo: event,
+                });
+                break;
             }
           },
-          style: "destructive",
         },
       ]
     );

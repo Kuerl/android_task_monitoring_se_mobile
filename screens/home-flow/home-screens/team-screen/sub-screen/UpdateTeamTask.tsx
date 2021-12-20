@@ -1,20 +1,21 @@
 import React, { useContext, useEffect } from "react";
-import { StyleSheet, ScrollView } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
+
 import AddTaskForm from "../../../../../components/AddTaskForm";
 import {
   TeamContextType,
   TeamTaskContextType,
 } from "../../../../../context/ContextTypes";
-
-import { Context as TeamContext } from "../../../../../context/TeamContext";
 import { Context as TeamTaskContext } from "../../../../../context/TeamTaskContext";
-import { TeamTabList } from "../TeamFlowList";
-import { DrawerScreenProps } from "@react-navigation/drawer";
+import { Context as TeamContext } from "../../../../../context/TeamContext";
+import { StackScreenProps } from "@react-navigation/stack";
+import { TeamTaskStackList } from "../TeamFlowList";
 
-type TeamDrawerProps = DrawerScreenProps<TeamTabList, "AddTeamTask">;
+type TeamTaskProps = StackScreenProps<TeamTaskStackList, "UpdateTeamTask">;
 
-const AddTeamTask: React.FC<TeamDrawerProps> = ({ route }) => {
-  const { createNewTask }: TeamTaskContextType = useContext(TeamTaskContext);
+const UpdateTeamTask: React.FC<TeamTaskProps> = ({ route }) => {
+  const { state, updateTask }: TeamTaskContextType =
+    useContext(TeamTaskContext);
   const { loadTeamMembers }: TeamContextType = useContext(TeamContext);
 
   useEffect(() => {
@@ -24,9 +25,14 @@ const AddTeamTask: React.FC<TeamDrawerProps> = ({ route }) => {
   return (
     <ScrollView style={styles.container}>
       <AddTaskForm
-        formType="CREATE"
-        createNewTask={createNewTask}
+        formType="UPDATE"
         pkTeam_Id={route.params.pkTeam_Id}
+        update={{
+          updateExistingTask: updateTask,
+          taskInfo: state.tasks.find(
+            (task) => task.pkTask_Id == route.params.taskInfo.pkTask_Id
+          ),
+        }}
       />
     </ScrollView>
   );
@@ -40,4 +46,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddTeamTask;
+export default UpdateTeamTask;

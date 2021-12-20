@@ -19,6 +19,7 @@ export type TeamTaskActionType =
       payload: TaskType;
     }
   | { type: "load_task"; payload: TaskType[] }
+  | { type: "update_task"; payload: TaskType }
   | { type: "add_err"; payload: { errorMessage: string } }
   | { type: "clear_err" };
 
@@ -33,6 +34,12 @@ export type NewTeamTaskType = {
 export type LoadTeamTaskType = {
   // username: string;
   pkTeam_Id: string;
+};
+
+export type UpdateTeamTaskType = {
+  username: string;
+  pkTeam_Id: string;
+  taskData: TaskType;
 };
 
 const teamReducer = (state: TeamTaskStateType, action: TeamTaskActionType) => {
@@ -63,6 +70,13 @@ const teamReducer = (state: TeamTaskStateType, action: TeamTaskActionType) => {
         ...state,
         tasks: action.payload,
       };
+    case "update_task":
+      return {
+        ...state,
+        tasks: state.tasks.map((task) =>
+          task.pkTask_Id === action.payload.pkTask_Id ? action.payload : task
+        ),
+      };
     case "add_err":
       return {
         ...state,
@@ -80,31 +94,34 @@ const teamReducer = (state: TeamTaskStateType, action: TeamTaskActionType) => {
 
 const createNewTask = (dispatch: Dispatch<TeamTaskActionType>) => {
   return async ({ pkTeam_Id, taskData }: NewTeamTaskType) => {
-    try {
-      const res = await axios.post("/task/team/" + pkTeam_Id, {
-        ...taskData,
-        taskType: "Team",
-        user: "anhviet",
-      });
-      if (res.data.effect) {
-        dispatch({
-          type: "add_task",
-          payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
+    if (taskData.user) {
+      try {
+        const res = await axios.post("/task/team/" + pkTeam_Id, {
+          ...taskData,
+          taskType: "Team",
+          user: taskData.user.username,
         });
-        Alert.alert("Your team task has been created successfully!", "", [
-          {
-            text: "Ok",
-            onPress: () => RootNavigation.dispatch("TeamTask"),
-          },
-        ]);
-      } else {
-        dispatch({
-          type: "add_err",
-          payload: { errorMessage: "Create new team task failed" },
-        });
+        if (res.data.effect) {
+          dispatch({
+            type: "add_task",
+            payload: { ...taskData, pkTask_Id: res.data.pkTask_Id },
+          });
+          Alert.alert("Your team task has been created successfully!", "", [
+            {
+              text: "Ok",
+              onPress: () => RootNavigation.dispatch("TeamTask"),
+            },
+          ]);
+        } else {
+          Alert.alert("Something went wrong!");
+          dispatch({
+            type: "add_err",
+            payload: { errorMessage: "Create new team task failed" },
+          });
+        }
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
     }
   };
 };
@@ -133,8 +150,45 @@ const loadTask = (dispatch: Dispatch<TeamTaskActionType>) => {
   };
 };
 
+const updateTask = (dispatch: Dispatch<TeamTaskActionType>) => {
+  return async ({ pkTeam_Id, username, taskData }: UpdateTeamTaskType) => {
+    if (taskData.user) {
+      try {
+        const res = await axios.put(
+          `/task/team/${pkTeam_Id}/${taskData.pkTask_Id}/${username}`,
+          {
+            ...taskData,
+            taskType: "Team",
+            user: taskData.user.username,
+          }
+        );
+        if (res.data.effect) {
+          dispatch({
+            type: "update_task",
+            payload: taskData,
+          });
+          Alert.alert("Your team task has been updated successfully!", "", [
+            {
+              text: "Ok",
+              onPress: () => RootNavigation.dispatch("TeamTask"),
+            },
+          ]);
+        } else {
+          Alert.alert("Something went wrong!");
+          dispatch({
+            type: "add_err",
+            payload: { errorMessage: "Update team task failed" },
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+};
+
 export const { Provider, Context } = createDataContext(
   teamReducer,
-  { createNewTask, loadTask },
+  { createNewTask, loadTask, updateTask },
   { tasks: [], errorMessage: "" }
 );

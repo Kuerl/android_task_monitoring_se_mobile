@@ -24,6 +24,7 @@ export const splitTask = (taskList: any) => {
           user: val.user,
           done: val.done,
           color: val.color,
+          finalDue: val.due,
         };
 
         if (i == 0) {
@@ -44,6 +45,7 @@ export const splitTask = (taskList: any) => {
         user: val.user,
         done: val.done,
         color: val.color,
+        finalDue: val.due,
       });
     }
     return arr;

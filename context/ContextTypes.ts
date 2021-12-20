@@ -3,6 +3,7 @@ import {
   LoadPersonalTaskType,
   NewPersonalTaskType,
   PersonalStateType,
+  UpdatePersonalTask,
 } from "./PersonalContext";
 import {
   CreateTeamProps,
@@ -14,6 +15,7 @@ import {
   LoadTeamTaskType,
   NewTeamTaskType,
   TeamTaskStateType,
+  UpdateTeamTaskType,
 } from "./TeamTaskContext";
 
 export type AuthContextType = {
@@ -34,10 +36,12 @@ export type PersonalContextType = {
   state: PersonalStateType;
   createNewTask: (props: NewPersonalTaskType) => void;
   loadTask: (props: LoadPersonalTaskType) => void;
+  updateTask: (props: UpdatePersonalTask) => void;
 };
 
 export type TeamTaskContextType = {
   state: TeamTaskStateType;
   createNewTask: (props: NewTeamTaskType) => void;
   loadTask: (props: LoadTeamTaskType) => void;
+  updateTask: (props: UpdateTeamTaskType) => void;
 };

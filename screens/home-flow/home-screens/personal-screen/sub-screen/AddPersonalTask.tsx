@@ -10,7 +10,7 @@ const AddPersonalTask: React.FC = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <AddTaskForm type="Personal" createNewTask={createNewTask} pkTeam_Id="" />
+      <AddTaskForm formType="CREATE" createNewTask={createNewTask} />
     </ScrollView>
   );
 };

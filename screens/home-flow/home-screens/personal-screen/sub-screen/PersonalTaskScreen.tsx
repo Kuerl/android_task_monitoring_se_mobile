@@ -29,7 +29,6 @@ const PersonalTaskScreen: React.FC<PersonalDrawerProps> = ({ navigation }) => {
       <View style={styles.header} />
       <TaskTimeline
         events={splitTask(state.tasks)}
-        type="Personal"
         refresh={() => loadTask({ username: authContext.state.username })}
       />
       <FAB

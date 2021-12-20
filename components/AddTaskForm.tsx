@@ -16,6 +16,8 @@ import {
 } from "../context/PersonalContext";
 import DateTimePicker from "./DateTimePicker";
 import { TriangleColorPicker } from "react-native-color-picker";
+import axios from "../utils/AxiosBase";
+import * as RootNavigation from "../utils/NavigationRef";
 
 import { Context as AuthContext } from "../context/AuthContext";
 import { Context as TeamContext, Member } from "../context/TeamContext";
@@ -342,6 +344,71 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
           }
         }}
       />
+      {update ? (
+        <Button
+          title="Delete Task"
+          buttonStyle={{
+            backgroundColor: "rgba(214, 61, 57, 1)",
+            marginVertical: 30,
+          }}
+          onPress={() => {
+            Alert.alert(
+              "Are you sure?",
+              "This action will delete your task permanently!",
+              [
+                {
+                  text: "Yes",
+                  style: "destructive",
+                  onPress: async () => {
+                    if (update.taskInfo) {
+                      try {
+                        let res;
+                        if (pkTeam_Id && update.taskInfo) {
+                          res = await axios.delete(
+                            `/task/team/${pkTeam_Id}/${update.taskInfo.pkTask_Id}/${state.username}`
+                          );
+                        } else {
+                          res = await axios.delete(
+                            `/task/personal/${state.username}/${update.taskInfo.pkTask_Id}`
+                          );
+                        }
+                        if (res.data.effect) {
+                          Alert.alert(
+                            "Your task has been deleted successfully!",
+                            "",
+                            [
+                              {
+                                text: "Ok",
+                                onPress: () => {
+                                  if (pkTeam_Id) {
+                                    RootNavigation.dispatch("TeamTask", {
+                                      pkTeam_Id: pkTeam_Id,
+                                    });
+                                  } else {
+                                    RootNavigation.dispatch("PersonalTask");
+                                  }
+                                },
+                              },
+                            ]
+                          );
+                        } else {
+                          Alert.alert("You cannot delete this task!");
+                        }
+                      } catch (err) {
+                        console.log(err);
+                      }
+                    }
+                  },
+                },
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+              ]
+            );
+          }}
+        />
+      ) : null}
     </>
   );
 };

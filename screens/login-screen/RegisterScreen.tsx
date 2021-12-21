@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { loginStyles } from './styles/LoginStyle';
 import * as Animatable from 'react-native-animatable';
 import __logo from '../../assets/images/atm_logo_mini.png';
@@ -7,6 +7,9 @@ import { signform, svurl } from '../../constants/Constant';
 import InputComponent from '../../components/InputComponent';
 import __axios from '../../utils/AxiosBase';
 import axios from 'axios';
+import {LoadingContextType} from '../../context/ContextTypes';
+import { Context as LoadingContext } from '../../context/LoadingContext';
+import {wait} from '../../utils/Wait';
 
 export default function RegisterScreen(
   { form, setForm }: { form: any, setForm: Function}
@@ -25,17 +28,31 @@ export default function RegisterScreen(
   });
   const [resError, setResError] = useState({ effect: false, status: '' });
 
+  const { setLoading }: LoadingContextType = useContext(LoadingContext);
+
   const registerReq = async () => {
+    setLoading(true);
     await axios.post(svurl + 'register', 
       signup
     ).then(res => {
-      if (!res.data.effect) {
-        setResError({ effect: true, status: res.data.status })
-      }
-      else {
-        setForm(999);
-      }
-    }).catch(err => console.log(err));
+      wait(1000).then(() => {
+        setLoading(false);
+        if (!res.data.effect) {
+          setResError({ effect: true, status: res.data.status })
+        }
+        else {
+          setForm(999);
+        }
+      })
+    }).catch(err => {
+        wait(1000).then(() => {
+          setLoading(false);
+          setTimeout(() => {
+            Alert.alert("Oops! Something went wrong. Please try again!");
+          }, 100)
+        })
+        console.log(err);
+    });
   }
 
   return(
@@ -70,7 +87,10 @@ export default function RegisterScreen(
         </View>
         <View style={loginStyles.signin__btn__view}>
             <TouchableOpacity style={loginStyles.signin__btn}
-              onPress={() => registerReq()}
+              onPress={() => {
+                if (signup.lastName && signup.firstName && signup.password && signup.username)
+                  registerReq();
+              }}
             >
               <Text style={loginStyles.signin__btn__text}>SIGN UP</Text>
             </TouchableOpacity>

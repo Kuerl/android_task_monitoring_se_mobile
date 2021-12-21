@@ -7,7 +7,11 @@ import { signform } from "../../constants/Constant";
 import { loginStyles } from "./styles/LoginStyle";
 
 import { Context as AuthContext } from "../../context/AuthContext";
-import { AuthContextType } from "../../context/ContextTypes";
+import { Context as LoadingContext } from "../../context/LoadingContext";
+import {
+  AuthContextType,
+  LoadingContextType,
+} from "../../context/ContextTypes";
 
 export default function LoginScreen({
   form,
@@ -21,6 +25,7 @@ export default function LoginScreen({
   // setAuth: Function;
 }) {
   const { state, signIn }: AuthContextType = useContext(AuthContext);
+  const { setLoading }: LoadingContextType = useContext(LoadingContext);
 
   const rotate = { back: false };
   const [signin, setSignIn] = useState({
@@ -96,7 +101,12 @@ export default function LoginScreen({
         <View style={loginStyles.signin__btn__view}>
           <TouchableOpacity
             style={loginStyles.signin__btn}
-            onPress={() => signIn(signin)}
+            onPress={() => {
+              if (signin.password && signin.username) {
+                setLoading(true);
+                signIn({ ...signin, setLoading });
+              }
+            }}
           >
             <Text style={loginStyles.signin__btn__text}>SIGN IN</Text>
           </TouchableOpacity>
@@ -110,7 +120,9 @@ export default function LoginScreen({
             </Text>
           ) : (signin.username.length < 6 || signin.username.length > 20) &&
             display.edited === true ? (
-            <Text style={loginStyles.none__check}>Not valid input username</Text>
+            <Text style={loginStyles.none__check}>
+              Not valid input username
+            </Text>
           ) : state.errorMessage.effect === true ? (
             <Text style={loginStyles.none__check}>
               {state.errorMessage.status}

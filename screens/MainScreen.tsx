@@ -50,13 +50,11 @@ export default function MainScreen() {
         // }
         />
       ) : baseState.unsplash === true && state.authentication === true ? (
-        <>
-          <HomeScreen />
-          <LoadingComponent />
-        </>
+        <HomeScreen />
       ) : (
         <SplashScreen />
       )}
+      <LoadingComponent />
     </NavigationContainer>
   );
 }

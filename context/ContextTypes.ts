@@ -21,7 +21,7 @@ import {
 
 export type AuthContextType = {
   state: AuthStateType;
-  signIn: ({ username, password }: SignInProps) => void;
+  signIn: ({ username, password, setLoading }: SignInProps) => void;
   clearErrorMessage: () => void;
   signOut: () => void;
 };

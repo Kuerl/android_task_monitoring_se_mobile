@@ -1,6 +1,8 @@
 import createDataContext from "../utils/CreateDataContext";
 import axios from "../utils/AxiosBase";
 import { Dispatch } from "react";
+import { wait } from "../utils/Wait";
+import { Alert } from "react-native";
 
 export type AuthStateType = {
   authentication: boolean;
@@ -33,6 +35,7 @@ type AuthActionType =
 export type SignInProps = {
   username: string;
   password: string;
+  setLoading: (props: boolean) => void;
 };
 
 const authReducer = (state: AuthStateType, action: AuthActionType) => {
@@ -82,17 +85,40 @@ const clearErrorMessage = (dispatch: Dispatch<AuthActionType>) => () => {
 
 // if valid: sign in, then get all user information - else: err msg
 const signIn = (dispatch: Dispatch<AuthActionType>) => {
-  return async ({ username, password }: SignInProps) => {
+  return async ({ username, password, setLoading }: SignInProps) => {
     try {
       const res = await axios.post("/login", { username, password });
       if (res.data.effect) {
         const userInfo = await axios.get("/user/" + username);
-        dispatch({ type: "get_infor", payload: userInfo.data });
-        dispatch({ type: "sign_in" });
+        wait(1000).then(() => {
+          setLoading(false);
+          if (userInfo.data) {
+            dispatch({ type: "get_infor", payload: userInfo.data });
+            dispatch({ type: "sign_in" });
+          } else {
+            setTimeout(() => {
+              Alert.alert("Something went wrong. Please try again!");
+            }, 100);
+          }
+        });
       } else {
+        wait(1000).then(() => {
+          setLoading(false);
+          setTimeout(() => {
+            Alert.alert(
+              "Login failed! Please check your username and password again"
+            );
+          }, 100);
+        });
         dispatch({ type: "add_err", payload: { status: res.data.status } });
       }
     } catch (err) {
+      wait(1000).then(() => {
+        setLoading(false);
+        setTimeout(() => {
+          Alert.alert("Oops! Something went wrong. Please try again!");
+        }, 100);
+      });
       console.log(err);
     }
   };
